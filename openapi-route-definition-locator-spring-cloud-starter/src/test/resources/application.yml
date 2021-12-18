@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: api-manager
+  cloud:
+    gateway:
+      default-filters:
+        - AddResponseHeader=X-Response-FromGlobalConfig, global-sample-value
+      httpserver:
+        wiretap: true
+      httpclient:
+        pool:
+          metrics: true
+        wiretap: true
+      metrics:
+        enabled: true
+  management:
+    endpoints:
+      web:
+        exposure:
+          include:
+            - health
+            - info
+            - prometheus
+
+logging:
+  level:
+    root: info
+    org.springframework.cloud.gateway: debug
+    org.springframework.http.server.reactive: debug
+    org.springframework.web.reactive: info
+    org.springframework.boot.autoconfigure.web: debug
+    reactor.netty: info
+    redisratelimiter: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+openapi-route-definition-locator:
+  # enabled: false
+  services:
+    - id: user-service
+      uri: http://localhost:9091
+    - id: order-service
+      uri: http://localhost:9092
+  update-scheduler:
+    fixed-delay: 1s
+    remove-routes-on-update-failures-after: 5s

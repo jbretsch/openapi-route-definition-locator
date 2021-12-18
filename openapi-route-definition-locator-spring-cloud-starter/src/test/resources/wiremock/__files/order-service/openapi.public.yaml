@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: Orders API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+x-gateway-route-settings:
+  filters:
+    - PrefixPath=/api
+    - AddResponseHeader=X-Response-FromOpenApiDefinition, sample-value
+  order: 1
+  metadata:
+    optionName: "OptionValue"
+    compositeObject:
+      name: "value"
+    aList:
+      - foo
+      - bar
+    iAmNumber: 1
+paths:
+  /users/{userId}/orders:
+    get:
+      summary: Returns a list of orders.
+      tags:
+        - Orders
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        200:
+          description: An array of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+      x-gateway-route-settings:
+        filters:
+          - name: SetStatus
+            args:
+              status: 418
+        metadata:
+          compositeObject:
+            otherName: 2
+          aList:
+            - quuz
+    post:
+      summary: Creates an order.
+      tags:
+        - Orders
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        201:
+          description: An order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /users/{userId}/orders/{orderId}:
+    get:
+      summary: Returns an order.
+      tags:
+        - Orders
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        200:
+          description: An order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+      x-gateway-route-settings:
+        filters:
+          - name: SetStatus
+            args:
+              status: 418
+components:
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      schema:
+        type: string
+        format: uuid
+      required: true
+    OrderId:
+      name: orderId
+      in: path
+      schema:
+        type: string
+        format: uuid
+      required: true
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              article:
+                type: string
+                example: Bread
+              amount:
+                type: integer
+                example: 2
+            required:
+              - article
+              - amount
+      required:
+        - id
+        - items

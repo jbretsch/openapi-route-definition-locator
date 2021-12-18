@@ -1,0 +1,122 @@
+version: '3'
+
+tasks:
+
+  build:
+    desc: Build the Docker images for all sample services.
+    dir: ..
+    cmds:
+      - ./gradlew bootBuildImage
+
+  deploy:
+    desc: Deploy all sample services.
+    deps:
+      - deploy-services
+    cmds:
+      - task: deploy-api-gateway
+
+  deploy-services:
+    deps:
+      - deploy-nginx-controller
+      - deploy-prometheus
+    cmds:
+      - task: deploy-service-orders
+      - task: deploy-service-users
+
+  deploy-debug:
+    deps:
+      - deploy-debug-nginx-controller
+      - deploy-debug-service-orders
+      - deploy-debug-service-users
+      - deploy-debug-api-gateway
+
+  undeploy:
+    desc: Undeploy all sample services.
+    ignore_error: true
+    deps:
+      - undeploy-nginx-controller
+      - undeploy-prometheus
+      - undeploy-service-orders
+      - undeploy-service-users
+      - undeploy-api-gateway
+
+  deploy-nginx-controller:
+    cmds:
+      - helm repo add nginx-stable https://helm.nginx.com/stable
+      - helm repo update
+      - helm upgrade --install nginx-controller nginx-stable/nginx-ingress
+
+  deploy-debug-nginx-controller:
+    cmds:
+      - helm repo add nginx-stable https://helm.nginx.com/stable
+      - helm repo update
+      - helm upgrade --dry-run --debug --install nginx-controller nginx-stable/nginx-ingress --version 0.13.0
+
+  undeploy-nginx-controller:
+    ignore_error: true
+    cmds:
+      - helm delete nginx-controller
+
+  deploy-api-gateway:
+    dir: api-gateway/helm
+    cmds:
+      - helm upgrade --install api-gateway .
+
+  deploy-debug-api-gateway:
+    dir: api-gateway/helm
+    cmds:
+      - helm upgrade --dry-run --debug --install api-gateway .
+
+  undeploy-api-gateway:
+    ignore_error: true
+    cmds:
+      - helm delete api-gateway
+
+  deploy-service-orders:
+    dir: service-orders/helm
+    cmds:
+      - helm upgrade --install service-orders .
+
+  deploy-debug-service-orders:
+    dir: service-orders/helm
+    cmds:
+      - helm upgrade --dry-run --debug --install service-orders .
+
+  undeploy-service-orders:
+    ignore_error: true
+    cmds:
+      - helm delete service-orders
+
+  deploy-service-users:
+    dir: service-users/helm
+    cmds:
+      - helm upgrade --install service-users .
+
+  deploy-debug-service-users:
+    dir: service-users/helm
+    cmds:
+      - helm upgrade --dry-run --debug --install service-users .
+
+  undeploy-service-users:
+    ignore_error: true
+    cmds:
+      - helm delete service-users
+
+  deploy-prometheus:
+    cmds:
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo update
+      - |
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --version 30.0.0 \
+            --set prometheus-node-exporter.hostRootFsMount=false \
+            --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+            --set grafana.ingress.enabled=true \
+            --set 'grafana.ingress.annotations."kubernetes\.io/ingress\.class"=nginx' \
+            --set 'grafana.ingress.hosts={"grafana.127.0.0.1.nip.io"}' \
+            --set grafana.adminPassword=admin \
+            --set grafana.sidecar.dashboards.enabled=true
+
+  undeploy-prometheus:
+    ignore_error: true
+    cmds:
+      - helm delete prometheus

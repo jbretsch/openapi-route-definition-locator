@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+    application: "{{ .Release.Name }}"
+spec:
+  ports:
+    - port: {{ .Values.appConfig.server.port }}
+      targetPort: http
+      name: http
+  selector:
+    app.kubernetes.io/name: "{{ .Release.Name }}"

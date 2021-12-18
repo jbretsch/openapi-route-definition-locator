@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ .Release.Name }}"
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: main
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.appConfig.server.port }}
+          env:
+            - name: SPRING_APPLICATION_JSON
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}"
+                  key: spring.application.json
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xss256k -XX:ReservedCodeCacheSize=16M -XX:MaxMetaspaceSize=64M -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10"
+            - name: MALLOC_ARENA_MAX
+              value: "1"
+          resources:
+            limits:
+              memory: 192Mi
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.appConfig.server.port }}
+            periodSeconds: 1
+            failureThreshold: 20
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.appConfig.server.port }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.appConfig.server.port }}

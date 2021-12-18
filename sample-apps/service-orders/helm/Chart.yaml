@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Deploys the orders service.
+name: service-orders
+version: 0.1.0

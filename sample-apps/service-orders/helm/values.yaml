@@ -1,0 +1,9 @@
+replicaCount: 1
+image:
+  name: bretti.net/sample-service-orders
+  tag: latest
+  pullPolicy: IfNotPresent
+
+appConfig:
+  server:
+    port: 8080

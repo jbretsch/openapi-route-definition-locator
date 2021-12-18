@@ -1,0 +1,11 @@
+API gateway base URL: http://{{ .Values.ingress.host }}
+
+Try:
+    curl -v http://{{ .Values.ingress.host }}/users | jq .
+    curl -v http://{{ .Values.ingress.host }}/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868 | jq .
+    curl -v http://{{ .Values.ingress.host }}/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868/orders | jq .
+    curl -v http://{{ .Values.ingress.host }}/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868/orders/271acbc1-50b0-45ae-ad04-a231f1057714 | jq .
+    curl -v http://{{ .Values.ingress.host }}/actuator/gateway/routes | jq .
+
+Grafana: http://grafana.127.0.0.1.nip.io/
+Grafana login credentials: admin // admin
