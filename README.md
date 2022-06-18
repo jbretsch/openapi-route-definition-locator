@@ -1,6 +1,6 @@
 # OpenAPI Route Definition Locator for Spring Cloud Gateway
 
-[![Maven Central](https://img.shields.io/maven-central/v/net.bretti.openapi-route-definition-locator/openapi-route-definition-locator-spring-cloud-starter?color=brightgreen)](https://maven-badges.herokuapp.com/maven-central/net.bretti.openapi-route-definition-locator/openapi-route-definition-locator-spring-cloud-starter)
+[![Maven Central](https://img.shields.io/maven-central/v/net.bretti.openapi-route-definition-locator/openapi-route-definition-locator-spring-cloud-starter?color=brightgreen)](https://search.maven.org/search?q=g:net.bretti.openapi-route-definition-locator)
 [![License](https://img.shields.io/github/license/jbretsch/openapi-route-definition-locator?color=brightgreen)](https://github.com/jbretsch/openapi-route-definition-locator/blob/master/LICENSE)
 
 The OpenAPI Route Definition Locator is a
