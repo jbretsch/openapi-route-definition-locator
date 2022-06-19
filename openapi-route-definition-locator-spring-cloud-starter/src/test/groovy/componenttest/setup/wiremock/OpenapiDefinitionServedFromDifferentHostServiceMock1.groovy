@@ -16,19 +16,27 @@
  *
  */
 
-package net.bretti.sample.service.orders.controller;
+package componenttest.setup.wiremock
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import static com.github.tomakehurst.wiremock.client.WireMock.get
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 
-@RequestMapping(path = "/non-default-path-to/openapi-definition")
-@RestController
-public class OpenApiDefinitionController {
-    @GetMapping
-    public ResponseEntity<ClassPathResource> get() {
-        return ResponseEntity.ok(new ClassPathResource("openapi.public.yaml"));
+@Singleton(strict = false)
+class OpenapiDefinitionServedFromDifferentHostServiceMock1 extends BaseWireMock {
+
+    OpenapiDefinitionServedFromDifferentHostServiceMock1() {
+        super(9093)
     }
+
+    void mockGetThings() {
+        client.register(get(urlEqualTo("/things"))
+            .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody('[{"id": "thing-id-1"}]')
+            )
+        )
+    }
+
 }

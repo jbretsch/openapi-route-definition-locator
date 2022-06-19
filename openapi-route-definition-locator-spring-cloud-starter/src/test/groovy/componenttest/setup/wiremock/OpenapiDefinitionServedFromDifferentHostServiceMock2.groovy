@@ -18,18 +18,15 @@
 
 package componenttest.setup.wiremock
 
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.post
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 
 @Singleton(strict = false)
-class OrderServiceMock extends BaseWireMock {
+class OpenapiDefinitionServedFromDifferentHostServiceMock2 extends BaseWireMock {
 
-    OrderServiceMock() {
-        super(9092)
+    OpenapiDefinitionServedFromDifferentHostServiceMock2() {
+        super(9094)
     }
 
     void mockOpenApiDefinition() {
@@ -37,37 +34,7 @@ class OrderServiceMock extends BaseWireMock {
             .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/yaml")
-                    .withBodyFile("order-service/openapi.public.yaml")
-            )
-        )
-    }
-
-    void mockGetOrders() {
-        client.register(get(urlPathMatching("/api/users/.*?/orders"))
-            .willReturn(aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody('[{"id": "order-id-1"}]')
-            )
-        )
-    }
-
-    void mockGetOrder() {
-        client.register(get(urlPathMatching("/api/users/.*?/orders/.*?"))
-            .willReturn(aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody('{"id": "order-id-1"}')
-            )
-        )
-    }
-
-    void mockPostOrder() {
-        client.register(post(urlPathMatching("/api/users/.*?/orders"))
-            .willReturn(aResponse()
-                    .withStatus(201)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody('{"id": "order-id-1"}')
+                    .withBodyFile("openapi-definition-served-from-different-host-service/openapi.public.yaml")
             )
         )
     }

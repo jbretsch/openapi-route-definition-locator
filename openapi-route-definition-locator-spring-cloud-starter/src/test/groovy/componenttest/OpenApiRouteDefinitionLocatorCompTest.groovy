@@ -19,6 +19,8 @@
 package componenttest
 
 import componenttest.setup.app.TestApiGatewayApplication
+import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServiceMock1
+import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServiceMock2
 import componenttest.setup.wiremock.OrderServiceMock
 import componenttest.setup.wiremock.UserServiceMock
 import groovy.json.JsonSlurper
@@ -63,6 +65,8 @@ class OpenApiRouteDefinitionLocatorCompTest extends Specification {
         maxWaitTimeForRouteRemoval = locatorProperties.getUpdateScheduler().getRemoveRoutesOnUpdateFailuresAfter() + maxWaitTimeForRouteAddition
         UserServiceMock.instance.resetAll()
         OrderServiceMock.instance.resetAll()
+        OpenapiDefinitionServedFromDifferentHostServiceMock1.instance.resetAll()
+        OpenapiDefinitionServedFromDifferentHostServiceMock2.instance.resetAll()
     }
 
     def "API Gateway routes requests according to OpenAPI definitions"() {
@@ -80,9 +84,13 @@ class OpenApiRouteDefinitionLocatorCompTest extends Specification {
         OrderServiceMock.instance.mockGetOrder()
         OrderServiceMock.instance.mockPostOrder()
 
+        and:
+        OpenapiDefinitionServedFromDifferentHostServiceMock1.instance.mockGetThings()
+        OpenapiDefinitionServedFromDifferentHostServiceMock2.instance.mockOpenApiDefinition()
+
         when:
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 5
+            assert getRoutesFromActuatorEndpoint().size() == 6
         }
 
         and:
@@ -171,6 +179,17 @@ class OpenApiRouteDefinitionLocatorCompTest extends Specification {
         ]
         postOrderRoute.size() == 6
 
+        and:
+        Map getThingsRoute = extractRoute(routes, "GET", "/things")
+        getThingsRoute.predicate == "(Methods: [GET] && Paths: [/things], match trailing slash: true)"
+        getThingsRoute.route_id != null
+        getThingsRoute.filters == [
+                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+        ]
+        getThingsRoute.uri == "http://localhost:9093"
+        getThingsRoute.order == 0
+        getThingsRoute.size() == 5
+
         when:
         FluxExchangeResult<String> getUsersResponse = webTestClient
                 .get().uri("http://localhost:${localServerPort}/users")
@@ -233,6 +252,15 @@ class OpenApiRouteDefinitionLocatorCompTest extends Specification {
         then:
         postOrderResponse.getRawStatusCode() == 201
         postOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
+
+        when:
+        FluxExchangeResult<String> getContextInBaseUriThingsResponse = webTestClient
+                .get().uri("http://localhost:${localServerPort}/things")
+                .exchange().returnResult(String)
+
+        then:
+        getContextInBaseUriThingsResponse.getRawStatusCode() == 200
+        getContextInBaseUriThingsResponse.getResponseBody().blockFirst() == '[{"id": "thing-id-1"}]'
     }
 
     def "OpenAPI Route Definition are removed on retrieval errors only after grace period"() {

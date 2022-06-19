@@ -45,6 +45,10 @@ openapi-route-definition-locator:
       uri: http://localhost:9091
     - id: order-service
       uri: http://localhost:9092
+      openapi-definition-uri: /non-default-path-to/openapi-definition
+    - id: openapi-definition-served-from-different-host-service
+      uri: http://localhost:9093
+      openapi-definition-uri: http://localhost:9094/non-default-path-to/openapi-definition
   update-scheduler:
     fixed-delay: 1s
     remove-routes-on-update-failures-after: 5s

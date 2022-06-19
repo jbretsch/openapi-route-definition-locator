@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Service with OpenAPI definition served from different host
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /things:
+    get:
+      summary: Returns a list of things.
+      tags:
+        - Things
+      responses:
+        200:
+          description: An array of things
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Thing'
+components:
+  schemas:
+    Thing:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id

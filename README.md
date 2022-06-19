@@ -117,6 +117,12 @@ You can find a fully working example at [sample-apps](sample-apps). See the
 
 ### Advanced Configuration
 
+#### URI to OpenAPI definition
+
+TODO
+
+https://github.com/spring-cloud/spring-cloud-gateway/issues/881
+
 #### Default Filters
 
 As the OpenAPI Route Definition Locator is just another `RouteDefinitionLocator`, all

@@ -20,6 +20,8 @@ package net.bretti.openapi.route.definition.locator.core.config;
 
 import lombok.Data;
 import net.bretti.openapi.route.definition.locator.core.config.validation.OnlyUniqueServiceIds;
+import net.bretti.openapi.route.definition.locator.core.config.validation.ValidBaseUri;
+import net.bretti.openapi.route.definition.locator.core.config.validation.ValidOpenApiDefinitionUri;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -37,6 +39,8 @@ import java.util.List;
 @Data
 public class OpenApiRouteDefinitionLocatorProperties {
 
+    private static final String DEFAULT_OPENAPI_DEFINITION_URI = "/internal/openapi-definition";
+
     /**
      * List of services for routes should be registered in the gateway based on their
      * OpenAPI definitions.
@@ -52,6 +56,14 @@ public class OpenApiRouteDefinitionLocatorProperties {
     @Valid
     private UpdateScheduler updateScheduler = new UpdateScheduler();
 
+    /**
+     * The URI of the OpenAPI definitions to be retrieved from the configured services.
+     * This generally is a relative URI; relative to the base URI of each configured service.
+     * The default is "/internal/openapi-definition".
+     */
+    @ValidOpenApiDefinitionUri
+    private URI openapiDefinitionUri = URI.create(DEFAULT_OPENAPI_DEFINITION_URI);
+
     @Data
     public static class Service {
 
@@ -65,7 +77,17 @@ public class OpenApiRouteDefinitionLocatorProperties {
          * Base URI of the service.
          */
         @NotNull
+        @ValidBaseUri
         private URI uri;
+
+        /**
+         * The URI of the OpenAPI definition to be retrieved from the service.
+         * This generally is a relative URI; relative to the service's base URI.
+         * But it can also be an absolute URI. The default is
+         * "/internal/openapi-definition".
+         */
+        @ValidOpenApiDefinitionUri
+        private URI openapiDefinitionUri = URI.create(DEFAULT_OPENAPI_DEFINITION_URI);
     }
 
     @Data
@@ -86,4 +108,5 @@ public class OpenApiRouteDefinitionLocatorProperties {
         @NotNull
         private Duration removeRoutesOnUpdateFailuresAfter = Duration.of(15, ChronoUnit.MINUTES);
     }
+
 }

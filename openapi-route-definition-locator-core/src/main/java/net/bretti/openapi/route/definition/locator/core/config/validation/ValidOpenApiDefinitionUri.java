@@ -16,19 +16,22 @@
  *
  */
 
-package net.bretti.sample.service.orders.controller;
+package net.bretti.openapi.route.definition.locator.core.config.validation;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@RequestMapping(path = "/non-default-path-to/openapi-definition")
-@RestController
-public class OpenApiDefinitionController {
-    @GetMapping
-    public ResponseEntity<ClassPathResource> get() {
-        return ResponseEntity.ok(new ClassPathResource("openapi.public.yaml"));
-    }
+@Documented
+@Constraint(validatedBy = ValidOpenApiDefinitionUriValidator.class)
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidOpenApiDefinitionUri {
+    String message() default "Is invalid OpenAPI definition URI.";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
 }

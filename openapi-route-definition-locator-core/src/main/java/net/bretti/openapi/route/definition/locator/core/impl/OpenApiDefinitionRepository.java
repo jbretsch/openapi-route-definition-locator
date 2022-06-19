@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRoute
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_RETRIEVAL_RESULT_FAILURE;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_RETRIEVAL_RESULT_SUCCESS;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPSTREAM_SERVICE;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -145,15 +147,18 @@ public class OpenApiDefinitionRepository {
         });
     }
 
-    private static List<OpenApiOperation> getOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
+    private List<OpenApiOperation> getOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
         String yaml = getOpenApiDefinitionAsYamlString(service);
         OpenAPI openApi = parseOpenApiDefinition(yaml, service);
         return getOperations(service, openApi);
     }
 
-    private static String getOpenApiDefinitionAsYamlString(OpenApiRouteDefinitionLocatorProperties.Service service) {
-        WebClient webClient = WebClient.create(service.getUri().toString());
-        return webClient.get().uri("/internal/openapi-definition").retrieve().bodyToMono(String.class).block();
+    private String getOpenApiDefinitionAsYamlString(OpenApiRouteDefinitionLocatorProperties.Service service) {
+        URI openApiDefinitionUri = firstNonNull(service.getOpenapiDefinitionUri(), config.getOpenapiDefinitionUri());
+        URI fullOpenApiDefinitionUri = service.getUri().resolve(openApiDefinitionUri);
+        return WebClient.create()
+                .get().uri(fullOpenApiDefinitionUri)
+                .retrieve().bodyToMono(String.class).block();
     }
 
     private static OpenAPI parseOpenApiDefinition(String yaml, OpenApiRouteDefinitionLocatorProperties.Service service) {
