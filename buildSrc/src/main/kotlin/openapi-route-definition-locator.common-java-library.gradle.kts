@@ -50,3 +50,7 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
