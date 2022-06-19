@@ -160,7 +160,7 @@ which should be publicly available as
 - `GET /users/{userId}`.
 
 And you want the `GET /users/{userId}` endpoint to be available only after
-`2022-01-20T17:42:47.789-07:00[Europe/Berlin]`.
+`2022-01-20T17:42:47.789+01:00[Europe/Berlin]`.
 
 Spring Cloud Gateway offers the `PrefixPath` filter and the `After` predicate for those tasks.
 
@@ -200,7 +200,7 @@ paths:
                 type: string
       x-gateway-route-settings:
         predicates:
-          - After=2022-01-20T17:42:47.789-07:00[Europe/Berlin]
+          - After=2022-01-20T17:42:47.789+01:00[Europe/Berlin]
 ```
 
 Then the OpenAPI Route Definition Locator creates route definitions that would look like this if you
@@ -222,7 +222,7 @@ spring:
            predicates:
              - Method=GET 
              - Path=/users/{userId}
-             - After=2022-01-20T17:42:47.789-07:00[Europe/Berlin]
+             - After=2022-01-20T17:42:47.789+01:00[Europe/Berlin]
            filters:
               - PrefixPath=/api
 ```

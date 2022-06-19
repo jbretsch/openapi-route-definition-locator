@@ -101,7 +101,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends Specification {
         Map getUserRoute = extractRoute(routes, "GET", "/users/{userId}")
         getUserRoute.predicate ==
                 "(((Methods: [GET] && Paths: [/users/{userId}], match trailing slash: true) && " +
-                "After: 2022-01-21T01:42:47.789+01:00[Europe/Berlin]) && " +
+                "After: 2022-01-20T17:42:47.789+01:00[Europe/Berlin]) && " +
                 "Header: Required-Test-Header regexp=required-test-header-.*)"
         getUserRoute.route_id != null
         getUserRoute.filters == ["[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]"]

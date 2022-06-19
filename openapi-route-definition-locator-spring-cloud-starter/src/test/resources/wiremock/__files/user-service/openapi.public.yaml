@@ -40,7 +40,7 @@ paths:
                 $ref: '#/components/schemas/User'
       x-gateway-route-settings:
         predicates:
-          - After=2022-01-20T17:42:47.789-07:00[Europe/Berlin]
+          - After=2022-01-20T17:42:47.789+01:00[Europe/Berlin]
           - name: Header
             args:
               header: Required-Test-Header
