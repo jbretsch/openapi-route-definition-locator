@@ -119,9 +119,29 @@ You can find a fully working example at [sample-apps](sample-apps). See the
 
 #### URI to OpenAPI definition
 
-TODO
+Per default the OpenAPI definition of a service is retrieved via the URL path
+`/internal/openapi-definition` relative to the base URL of the respective service. If your
+service serves its OpenAPI definition from a different path, you can configure the OpenAPI Route
+Definition Locator accordingly. In fact, the OpenAPI definition can be retrieved from any HTTP(S)
+URL.
 
-https://github.com/spring-cloud/spring-cloud-gateway/issues/881
+```yaml
+openapi-route-definition-locator:
+  services:
+    - id: service1
+      uri: http://service1:8080
+      # OpenAPI definition is retrieved from http://service1:8080/internal/openapi-definition
+
+    - id: service2
+      uri: http://service2:8080
+      openapi-definition-uri: /non-default-path-to/openapi-definition
+      # OpenAPI definition is retrieved from http://service2:8080/non-default-path-to/openapi-definition
+
+    - id: service3
+      uri: http://service3:8080
+      openapi-definition-uri: http://openapi-repository/service3/openapi-definition
+      # OpenAPI definition is retrieved from http://openapi-repository/service3/openapi-definition
+```
 
 #### Default Filters
 
