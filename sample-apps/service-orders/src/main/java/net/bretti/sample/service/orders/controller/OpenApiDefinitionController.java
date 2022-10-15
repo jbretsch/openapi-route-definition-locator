@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(path = "/non-default-path-to/openapi-definition")
+@RequestMapping(path = "/custom-path-to/openapi-definition")
 @RestController
 public class OpenApiDefinitionController {
     @GetMapping

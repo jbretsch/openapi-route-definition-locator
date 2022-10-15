@@ -23,19 +23,18 @@ import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServ
 import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServiceMock2
 import componenttest.setup.wiremock.OrderServiceMock
 import componenttest.setup.wiremock.UserServiceMock
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.FluxExchangeResult
 
-import java.time.Duration
-import java.time.Instant
-
-class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
+@ActiveProfiles("custom-global-openapi-definition-url")
+class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
 
     def "API Gateway routes requests according to OpenAPI definitions"() {
         given:
         waitForRemovalOfAllRoutes()
 
         and:
-        UserServiceMock.instance.mockOpenApiDefinition()
+        UserServiceMock.instance.mockOpenApiDefinition("/global-custom-path-to/openapi-definition")
         UserServiceMock.instance.mockGetUsers()
         UserServiceMock.instance.mockGetUser()
 
@@ -222,52 +221,6 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         then:
         getContextInBaseUriThingsResponse.getRawStatusCode() == 200
         getContextInBaseUriThingsResponse.getResponseBody().blockFirst() == '[{"id": "thing-id-1"}]'
-    }
-
-    def "OpenAPI Route Definition are removed on retrieval errors only after grace period"() {
-        given:
-        waitForRemovalOfAllRoutes()
-
-        and:
-        UserServiceMock.instance.mockOpenApiDefinition()
-        OrderServiceMock.instance.mockOpenApiDefinition()
-
-        when:
-        waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 5
-        }
-
-        and:
-        List routes = getRoutesFromActuatorEndpoint()
-
-        then:
-        extractRoute(routes, "GET", "/users") != null
-        extractRoute(routes, "GET", "/users/{userId}") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
-        extractRoute(routes, "POST", "/users/{userId}/orders") != null
-
-        when:
-        OrderServiceMock.instance.resetAll()
-        Instant orderServiceUnavailableStart = Instant.now()
-        waitForRouteRemoval {
-            assert getRoutesFromActuatorEndpoint().size() == 2
-        }
-        Instant orderServiceRoutesRemoved = Instant.now()
-        routes = getRoutesFromActuatorEndpoint()
-
-        then:
-        Duration actualGracePeriod = Duration.between(orderServiceUnavailableStart, orderServiceRoutesRemoved)
-        Duration configuredGracePeriod = locatorProperties.getUpdateScheduler().getRemoveRoutesOnUpdateFailuresAfter()
-        actualGracePeriod > configuredGracePeriod
-        actualGracePeriod < configuredGracePeriod.plus(maxWaitTimeForRouteAddition)
-
-        and:
-        extractRoute(routes, "GET", "/users") != null
-        extractRoute(routes, "GET", "/users/{userId}") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders") == null
-        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
-        extractRoute(routes, "POST", "/users/{userId}/orders") == null
     }
 
 }

@@ -31,8 +31,8 @@ class UserServiceMock extends BaseWireMock {
         super(9091)
     }
 
-    void mockOpenApiDefinition() {
-        client.register(get(urlPathEqualTo("/internal/openapi-definition"))
+    void mockOpenApiDefinition(String path = "/internal/openapi-definition") {
+        client.register(get(urlPathEqualTo(path))
             .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/yaml")

@@ -84,10 +84,10 @@ public class OpenApiRouteDefinitionLocatorProperties {
          * The URI of the OpenAPI definition to be retrieved from the service.
          * This generally is a relative URI; relative to the service's base URI.
          * But it can also be an absolute URI. The default is
-         * "/internal/openapi-definition".
+         * the value of the property `openapi-route-definition-locator.openapi-definition-uri`.
          */
         @ValidOpenApiDefinitionUri
-        private URI openapiDefinitionUri = URI.create(DEFAULT_OPENAPI_DEFINITION_URI);
+        private URI openapiDefinitionUri;
     }
 
     @Data
