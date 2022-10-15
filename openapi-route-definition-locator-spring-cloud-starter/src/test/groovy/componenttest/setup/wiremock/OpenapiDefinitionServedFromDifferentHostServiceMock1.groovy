@@ -21,42 +21,20 @@ package componenttest.setup.wiremock
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 
 @Singleton(strict = false)
-class UserServiceMock extends BaseWireMock {
+class OpenapiDefinitionServedFromDifferentHostServiceMock1 extends BaseWireMock {
 
-    UserServiceMock() {
-        super(9091)
+    OpenapiDefinitionServedFromDifferentHostServiceMock1() {
+        super(9093)
     }
 
-    void mockOpenApiDefinition(String path = "/internal/openapi-definition") {
-        client.register(get(urlPathEqualTo(path))
-            .willReturn(aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/yaml")
-                    .withBodyFile("user-service/openapi.public.yaml")
-            )
-        )
-    }
-
-    void mockGetUsers() {
-        client.register(get(urlEqualTo("/users"))
+    void mockGetThings() {
+        client.register(get(urlEqualTo("/things"))
             .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
-                    .withBody('[{"id": "user-id-1"}]')
-            )
-        )
-    }
-
-    void mockGetUser() {
-        client.register(get(urlPathMatching("/users/.*?"))
-            .willReturn(aResponse()
-                    .withStatus(200)
-                    .withHeader("Content-Type", "application/json")
-                    .withBody('{"id": "user-id-1"}')
+                    .withBody('[{"id": "thing-id-1"}]')
             )
         )
     }

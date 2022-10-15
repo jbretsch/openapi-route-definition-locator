@@ -47,6 +47,7 @@ openapi-route-definition-locator:
       uri: http://localhost:8081
     - id: service2
       uri: http://localhost:8082
+      openapi-definition-uri: /custom-path-to/openapi-definition
   update-scheduler:
     fixed-delay: 30s
     remove-routes-on-update-failures-after: 120s

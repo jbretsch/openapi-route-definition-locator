@@ -117,6 +117,41 @@ You can find a fully working example at [sample-apps](sample-apps). See the
 
 ### Advanced Configuration
 
+#### URI to OpenAPI definition
+
+Per default the OpenAPI definition of a service is retrieved via the URL path
+`/internal/openapi-definition` relative to the base URL of the respective service. If your
+service serves its OpenAPI definition from a different path, you can configure the OpenAPI Route
+Definition Locator accordingly (since version 0.3.0). In fact, the OpenAPI definition can be
+retrieved from any HTTP(S) URL. The OpenAPI definition URL can be set globally or per service. Of
+course, you can set it also globally _and_ per service. The latter overrides the former.
+
+Setting the OpenAPI definition URL globally:
+```yaml
+openapi-route-definition-locator:
+  # Default: /internal/openapi-definition
+  openapi-definition-uri: /global-custom-path-to/openapi-definition
+```
+
+Setting the OpenAPI definition URL per service:
+```yaml
+openapi-route-definition-locator:
+  services:
+    - id: service1
+      uri: http://service1:8080
+      # OpenAPI definition is retrieved from http://service1:8080/internal/openapi-definition
+
+    - id: service2
+      uri: http://service2:8080
+      openapi-definition-uri: /custom-path-to/openapi-definition
+      # OpenAPI definition is retrieved from http://service2:8080/custom-path-to/openapi-definition
+
+    - id: service3
+      uri: http://service3:8080
+      openapi-definition-uri: http://openapi-repository/service3/openapi-definition
+      # OpenAPI definition is retrieved from http://openapi-repository/service3/openapi-definition
+```
+
 #### Default Filters
 
 As the OpenAPI Route Definition Locator is just another `RouteDefinitionLocator`, all

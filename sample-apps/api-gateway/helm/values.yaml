@@ -16,6 +16,7 @@ appConfig:
         uri: http://service-users:8080
       - id: service-orders
         uri: http://service-orders:8080
+        openapi-definition-uri: /custom-path-to/openapi-definition
     update-scheduler:
       fixed-delay: 30s
       remove-routes-on-update-failures-after: 120s

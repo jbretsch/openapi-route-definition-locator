@@ -33,7 +33,7 @@ class OrderServiceMock extends BaseWireMock {
     }
 
     void mockOpenApiDefinition() {
-        client.register(get(urlPathEqualTo("/internal/openapi-definition"))
+        client.register(get(urlPathEqualTo("/custom-path-to/openapi-definition"))
             .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/yaml")
