@@ -16,7 +16,7 @@ tasks.jar {
 }
 
 dependencies {
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.4"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5"))
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")
     runtimeOnly(project(":openapi-route-definition-locator-spring-cloud-starter"))
     runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
