@@ -26,7 +26,7 @@ API resources automatically configured during runtime. This works roughly as fol
 1. Have your microservices provide an OpenAPI definition for all their public API resources via a
    (non-public) HTTP endpoint.
 2. Add the OpenAPI Route Definition Locator Spring Boot starter module to your API Gateway.
-3. Configure in the Spring properties of your API Gateway a list of microservice which the
+3. Configure in the Spring properties of your API Gateway a list of microservices which the
    OpenAPI Route Definition Locator should monitor.
 4. The OpenAPI Route Definition Locator regularly retrieves the OpenAPI definitions of your microservices
    and configures a route for each of the operations in those OpenAPI definitions.
