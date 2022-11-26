@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.7.5")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.7.6")
     implementation("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
     implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
 }
