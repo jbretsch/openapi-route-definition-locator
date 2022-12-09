@@ -19,6 +19,7 @@
 package net.bretti.openapi.route.definition.locator.autoconfigure;
 
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
+import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRepository;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionUpdateScheduler;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocator;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,9 +61,10 @@ public class OpenApiRouteDefinitionLocatorAutoConfiguration {
 
     @Bean
     public OpenApiRouteDefinitionLocator openApiRouteDefinitionLocator(
-            OpenApiDefinitionRepository openApiDefinitionRepository
+            OpenApiDefinitionRepository openApiDefinitionRepository,
+            List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers
     ) {
-        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository);
+        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository, openApiRouteDefinitionCustomizers);
     }
 
     @Bean

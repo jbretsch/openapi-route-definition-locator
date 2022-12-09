@@ -38,6 +38,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+      x-sample-key: x-sample-key-value
 components:
   schemas:
     User:

@@ -16,16 +16,17 @@
  *
  */
 
-package componenttest.setup.app
+package net.bretti.openapi.route.definition.locator.core.customizer;
 
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.test.context.ActiveProfiles
+import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
+import org.springframework.cloud.gateway.route.RouteDefinition;
 
-@ActiveProfiles("test")
-@SpringBootApplication
-class TestApiGatewayApplication {
-    static void main(String[] args) {
-        SpringApplication.run(TestApiGatewayApplication, args)
-    }
+import java.util.Map;
+
+@FunctionalInterface
+public interface OpenApiRouteDefinitionCustomizer {
+    void customize(RouteDefinition routeDefinition,
+                   OpenApiRouteDefinitionLocatorProperties.Service service,
+                   Map<String, Object> openApiGlobalExtensions,
+                   Map<String, Object> openApiOperationExtensions);
 }

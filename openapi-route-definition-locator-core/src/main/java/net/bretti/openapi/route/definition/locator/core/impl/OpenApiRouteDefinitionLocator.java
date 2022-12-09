@@ -20,12 +20,14 @@ package net.bretti.openapi.route.definition.locator.core.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +36,8 @@ import java.util.UUID;
 public class OpenApiRouteDefinitionLocator implements RouteDefinitionLocator {
 
     private final OpenApiDefinitionRepository repository;
+
+    private final List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers;
 
     @Override
     public Flux<RouteDefinition> getRouteDefinitions() {
@@ -52,10 +56,18 @@ public class OpenApiRouteDefinitionLocator implements RouteDefinitionLocator {
             predicates.addAll(operation.getPredicates());
             routeDefinition.setPredicates(predicates);
 
-            routeDefinition.setFilters(operation.getFilters());
+            // Copy filters to make sure the filter list is mutable for OpenApiRouteDefinitionCustomizers.
+            routeDefinition.setFilters(new ArrayList<>(operation.getFilters()));
 
             operation.getOrder().ifPresent(routeDefinition::setOrder);
-            operation.getMetadata().ifPresent(routeDefinition::setMetadata);
+
+            // Copy metadata to make sure the metadata is mutable for OpenApiRouteDefinitionCustomizers.
+            operation.getMetadata().ifPresent(it -> routeDefinition.setMetadata(new HashMap<>(it)));
+
+            openApiRouteDefinitionCustomizers.forEach(customizer ->
+                customizer.customize(routeDefinition, service, operation.getOpenApiExtension(),
+                    operation.getOpenApiOperationExtension())
+            );
 
             routeDefinitions.add(routeDefinition);
         }));

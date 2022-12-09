@@ -4,6 +4,7 @@ info:
   version: 0.1.0
 servers:
   - url: http://localhost:8080
+x-auth-type: Application
 paths:
   /users:
     get:
@@ -45,6 +46,7 @@ paths:
             args:
               header: Required-Test-Header
               regexp: required-test-header-.*
+      x-auth-type: Application User
 components:
   schemas:
     User:

@@ -61,7 +61,10 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         Map getUsersRoute = extractRoute(routes, "GET", "/users")
         getUsersRoute.predicate == "(Methods: [GET] && Paths: [/users], match trailing slash: true)"
         getUsersRoute.route_id != null
-        getUsersRoute.filters == ["[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]"]
+        getUsersRoute.filters == [
+                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+                "[[AddResponseHeader X-Auth-Type-Was = 'Application'], order = 1]",
+        ]
         getUsersRoute.uri == "http://localhost:9091"
         getUsersRoute.order == 0
         getUsersRoute.size() == 5
@@ -73,7 +76,10 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 "After: 2022-01-20T17:42:47.789+01:00[Europe/Berlin]) && " +
                 "Header: Required-Test-Header regexp=required-test-header-.*)"
         getUserRoute.route_id != null
-        getUserRoute.filters == ["[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]"]
+        getUserRoute.filters == [
+                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+                "[[AddResponseHeader X-Auth-Type-Was = 'Application User'], order = 1]",
+        ]
         getUserRoute.uri == "http://localhost:9091"
         getUserRoute.order == 0
         getUserRoute.size() == 5

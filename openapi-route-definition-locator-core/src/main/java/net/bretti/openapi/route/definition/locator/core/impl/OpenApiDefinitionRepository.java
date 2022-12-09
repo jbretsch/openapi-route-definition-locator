@@ -196,7 +196,10 @@ public class OpenApiDefinitionRepository {
                             .predicates(predicates)
                             .metadata(metadata)
                             .order(order)
+                            .openApiExtension(firstNonNull(openApi.getExtensions(), Collections.emptyMap()))
+                            .openApiOperationExtension(firstNonNull(openApiOperation.getExtensions(), Collections.emptyMap()))
                             .build();
+
                     result.add(operation);
                 })
         );

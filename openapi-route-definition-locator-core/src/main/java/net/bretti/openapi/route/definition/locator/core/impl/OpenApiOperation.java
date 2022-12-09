@@ -26,6 +26,7 @@ import org.springframework.http.HttpMethod;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,4 +49,10 @@ public class OpenApiOperation {
 
     @Builder.Default
     Optional<Map<String, Object>> metadata = Optional.empty();
+
+    @Builder.Default
+    Map<String, Object> openApiExtension = new HashMap<>();
+
+    @Builder.Default
+    Map<String, Object> openApiOperationExtension = new HashMap<>();
 }

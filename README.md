@@ -318,6 +318,60 @@ x-gateway-route-settings:
     iAmNumber: 1
 ```
 
+#### Customize RouteDefinitions dynamically (since v0.4.0)
+
+For cases in which you need more control over the `RouteDefinitions` which are created based on 
+your OpenAPI definitions, the OpenAPI Route Definition Locator provides a hook you can use to
+dynamically alter those `RouteDefinitions`.
+
+For this you have to implement one or more Spring beans which implement the
+`OpenApiRouteDefinitionCustomizer` interface. Each of those customizer beans is called for each
+created `RouteDefinition`. In your customizer method you have access to
+
+* the `RouteDefinition`,
+* the configuration of the service the `RouteDefinition` belongs to,
+* the global [OpenAPI extensions](https://swagger.io/specification/#specification-extensions) of
+  the service's OpenAPI definition, and
+* the [OpenAPI extensions](https://swagger.io/specification/#specification-extensions) of
+  the OpenAPI operation the `RouteDefinition` is based on.
+
+Example customizer:
+```java
+package net.bretti.sample.apigateway.customizer;
+
+import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
+import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
+import org.springframework.cloud.gateway.filter.FilterDefinition;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+@Component
+public class SampleOpenApiRouteDefinitionCustomizer implements OpenApiRouteDefinitionCustomizer {
+    @Override
+    public void customize(
+            RouteDefinition routeDefinition,
+            OpenApiRouteDefinitionLocatorProperties.Service service,
+            Map<String, Object> openApiGlobalExtensions,
+            Map<String, Object> openApiOperationExtensions
+    ) {
+        Object xSampleKeyValue = openApiOperationExtensions.get("x-sample-key");
+        if (!(xSampleKeyValue instanceof String)) {
+            return;
+        }
+
+        FilterDefinition filter = new FilterDefinition("AddResponseHeader=X-Sample-Key-Was, " + xSampleKeyValue);
+        routeDefinition.getFilters().add(filter);
+    }
+}
+```
+
+Also see the
+[SampleOpenApiRouteDefinitionCustomizer.java](sample-apps/api-gateway/src/main/java/net/bretti/sample/apigateway/customizer/SampleOpenApiRouteDefinitionCustomizer.java)
+and the [openapi.public.yaml](sample-apps/service-users/src/main/resources/openapi.public.yaml)
+in the sample apps.
+
 #### Configure OpenAPI retrieval properties
 
 ##### Retrieval interval
