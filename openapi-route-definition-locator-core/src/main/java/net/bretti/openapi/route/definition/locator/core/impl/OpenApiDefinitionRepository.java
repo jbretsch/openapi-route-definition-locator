@@ -96,28 +96,28 @@ public class OpenApiDefinitionRepository {
     private boolean getAndUpdateOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
         long start = System.nanoTime();
         try {
-            log.info("Getting list of operations from {}", service.getId());
+            log.info("Getting list of operations for {}", service.getId());
             List<OpenApiOperation> newOpenApiOperations = getOperations(service);
             firstRetrievalFailures.remove(service);
             List<OpenApiOperation> oldOpenApiOperations = operations.get(service);
             if (!newOpenApiOperations.equals(oldOpenApiOperations)) {
-                log.info("Got new list of operations from {}", service.getId());
+                log.info("Got new list of {} operations for {}", newOpenApiOperations.size(), service.getId());
                 operations.put(service, newOpenApiOperations);
                 metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_SUCCESS, start);
                 return true;
             }
-            log.info("List of operations is unchanged for {}", service.getId());
+            log.info("List of {} operations is unchanged for {}", oldOpenApiOperations.size(), service.getId());
             metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_SUCCESS, start);
             return false;
         } catch (Exception e) {
             metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_FAILURE, start);
-            log.error("Error while retrieving REST operations from {}", service.getId(), e);
+            log.error("Error while retrieving REST operations for {}", service.getId(), e);
             Instant now = Instant.now();
             Instant firstRetrievalFailure = firstRetrievalFailures.computeIfAbsent(service, k -> now);
 
             List<OpenApiOperation> oldOpenApiOperations = operations.get(service);
             if (oldOpenApiOperations == null || oldOpenApiOperations.isEmpty()) {
-                log.error("Retrieving operations from {} keeps failing since {}. Currently, no operations for this " +
+                log.error("Retrieving operations for {} keeps failing since {}. Currently, no operations for this " +
                           "service are registered.", service.getId(), firstRetrievalFailure);
                 return false;
             }
@@ -163,6 +163,7 @@ public class OpenApiDefinitionRepository {
         URI openApiDefinitionUri = firstNonNull(service.getOpenapiDefinitionUri(), config.getOpenapiDefinitionUri());
         URI fullOpenApiDefinitionUri = service.getUri().resolve(openApiDefinitionUri);
 
+        log.info("Retrieving OpenAPI definition for {} from '{}'", service.getId(), fullOpenApiDefinitionUri);
         Resource resource = resourceLoader.getResource(fullOpenApiDefinitionUri.toString());
         try (InputStream is = resource.getInputStream()) {
             return StreamUtils.copyToString(is, StandardCharsets.UTF_8);
