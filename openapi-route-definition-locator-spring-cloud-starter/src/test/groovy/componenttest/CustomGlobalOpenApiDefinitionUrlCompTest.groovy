@@ -50,7 +50,7 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
 
         when:
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 6
+            assert getRoutesFromActuatorEndpoint().size() == 7
         }
 
         and:
@@ -155,6 +155,17 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getThingsRoute.uri == "http://localhost:9093"
         getThingsRoute.order == 0
         getThingsRoute.size() == 5
+
+        and:
+        Map getOpenApiInClassPathEntitiesRoute = extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath")
+        getOpenApiInClassPathEntitiesRoute.predicate == "(Methods: [GET] && Paths: [/entities-of-service-with-openapi-definition-in-classpath], match trailing slash: true)"
+        getOpenApiInClassPathEntitiesRoute.route_id != null
+        getOpenApiInClassPathEntitiesRoute.filters == [
+                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+        ]
+        getOpenApiInClassPathEntitiesRoute.uri == "http://localhost:9095"
+        getOpenApiInClassPathEntitiesRoute.order == 0
+        getOpenApiInClassPathEntitiesRoute.size() == 5
 
         when:
         FluxExchangeResult<String> getUsersResponse = webTestClient

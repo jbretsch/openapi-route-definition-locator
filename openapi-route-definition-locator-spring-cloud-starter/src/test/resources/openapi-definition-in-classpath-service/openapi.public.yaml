@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: API of Service which has its OpenAPI definition in the classpath of the API Gateway
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /entities-of-service-with-openapi-definition-in-classpath:
+    get:
+      summary: Test resource
+      tags:
+        - Test
+      responses:
+        200:
+          description: An array of test entities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestEntity'
+components:
+  schemas:
+    TestEntity:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id

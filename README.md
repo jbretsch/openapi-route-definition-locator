@@ -122,9 +122,12 @@ You can find a fully working example at [sample-apps](sample-apps). See the
 Per default the OpenAPI definition of a service is retrieved via the URL path
 `/internal/openapi-definition` relative to the base URL of the respective service. If your
 service serves its OpenAPI definition from a different path, you can configure the OpenAPI Route
-Definition Locator accordingly (since version 0.3.0). In fact, the OpenAPI definition can be
-retrieved from any HTTP(S) URL. The OpenAPI definition URL can be set globally or per service. Of
-course, you can set it also globally _and_ per service. The latter overrides the former.
+Definition Locator accordingly. In fact, the OpenAPI definition can be
+retrieved from any HTTP(S) URL or from local locations referenced via the URL schemas `file:` or
+`classpath:` that are supported by Spring's
+[ResourceLoader](https://docs.spring.io/spring-framework/docs/5.3.24/reference/html/core.html#resources-resourceloader).
+The OpenAPI definition URI can be set globally or per service. Of course, you can set it also
+globally _and_ per service. The latter overrides the former.
 
 Setting the OpenAPI definition URL globally:
 ```yaml
@@ -139,17 +142,27 @@ openapi-route-definition-locator:
   services:
     - id: service1
       uri: http://service1:8080
-      # OpenAPI definition is retrieved from http://service1:8080/internal/openapi-definition
+      # OpenAPI definition is retrieved from <http://service1:8080/internal/openapi-definition>.
 
     - id: service2
       uri: http://service2:8080
       openapi-definition-uri: /custom-path-to/openapi-definition
-      # OpenAPI definition is retrieved from http://service2:8080/custom-path-to/openapi-definition
+      # OpenAPI definition is retrieved from <http://service2:8080/custom-path-to/openapi-definition>.
 
     - id: service3
       uri: http://service3:8080
       openapi-definition-uri: http://openapi-repository/service3/openapi-definition
-      # OpenAPI definition is retrieved from http://openapi-repository/service3/openapi-definition
+      # OpenAPI definition is retrieved from <http://openapi-repository/service3/openapi-definition>.
+
+    - id: service4
+      uri: http://service4:8080
+      openapi-definition-uri: classpath:service4/openapi.public.yaml
+      # OpenAPI definition is retrieved from given classpath location.
+
+    - id: service5
+      uri: http://service5:8080
+      openapi-definition-uri: file:/etc/api-gateway/openapi-definitions/service5/openapi.public.yaml
+      # OpenAPI definition is retrieved from given file location.
 ```
 
 #### Default Filters
@@ -318,7 +331,7 @@ x-gateway-route-settings:
     iAmNumber: 1
 ```
 
-#### Customize RouteDefinitions dynamically (since v0.4.0)
+#### Customize RouteDefinitions dynamically
 
 For cases in which you need more control over the `RouteDefinitions` which are created based on 
 your OpenAPI definitions, the OpenAPI Route Definition Locator provides a hook you can use to

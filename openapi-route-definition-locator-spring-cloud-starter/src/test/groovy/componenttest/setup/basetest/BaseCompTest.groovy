@@ -91,7 +91,8 @@ abstract class BaseCompTest extends Specification {
 
     void waitForRemovalOfAllRoutes() {
         waitForRouteRemoval {
-            assert getRoutesFromActuatorEndpoint().size() == 0
+            // One route remains because it comes from an OpenAPI definition read from the classpath.
+            assert getRoutesFromActuatorEndpoint().size() == 1
         }
     }
 

@@ -32,6 +32,7 @@ import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
@@ -49,9 +50,10 @@ public class OpenApiRouteDefinitionLocatorAutoConfiguration {
     public OpenApiDefinitionRepository openApiDefinitionRepository(
             OpenApiRouteDefinitionLocatorProperties config,
             ApplicationEventPublisher applicationEventPublisher,
-            Optional<OpenApiRouteDefinitionLocatorTimedMetrics> metrics) {
+            Optional<OpenApiRouteDefinitionLocatorTimedMetrics> metrics,
+            ResourceLoader resourceLoader) {
         return new OpenApiDefinitionRepository(config, new ConcurrentHashMap<>(), new ConcurrentHashMap<>(),
-                applicationEventPublisher, metrics);
+                applicationEventPublisher, metrics, resourceLoader);
     }
 
     @Bean

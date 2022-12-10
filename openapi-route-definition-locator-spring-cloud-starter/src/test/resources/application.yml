@@ -49,6 +49,9 @@ openapi-route-definition-locator:
     - id: openapi-definition-served-from-different-host-service
       uri: http://localhost:9093
       openapi-definition-uri: http://localhost:9094/custom-path-to/openapi-definition
+    - id: openapi-definition-in-classpath-service
+      uri: http://localhost:9095
+      openapi-definition-uri: "classpath:openapi-definition-in-classpath-service/openapi.public.yaml"
   update-scheduler:
     fixed-delay: 1s
     remove-routes-on-update-failures-after: 5s

@@ -32,10 +32,15 @@ import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -71,6 +76,7 @@ public class OpenApiDefinitionRepository {
     private final ConcurrentHashMap<OpenApiRouteDefinitionLocatorProperties.Service, Instant> firstRetrievalFailures;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Optional<OpenApiRouteDefinitionLocatorTimedMetrics> metrics;
+    private final ResourceLoader resourceLoader;
 
     void getOpenApiDefinitions() {
         List<Boolean> gotUpdates = config.getServices().stream()
@@ -156,9 +162,13 @@ public class OpenApiDefinitionRepository {
     private String getOpenApiDefinitionAsYamlString(OpenApiRouteDefinitionLocatorProperties.Service service) {
         URI openApiDefinitionUri = firstNonNull(service.getOpenapiDefinitionUri(), config.getOpenapiDefinitionUri());
         URI fullOpenApiDefinitionUri = service.getUri().resolve(openApiDefinitionUri);
-        return WebClient.create()
-                .get().uri(fullOpenApiDefinitionUri)
-                .retrieve().bodyToMono(String.class).block();
+
+        Resource resource = resourceLoader.getResource(fullOpenApiDefinitionUri.toString());
+        try (InputStream is = resource.getInputStream()) {
+            return StreamUtils.copyToString(is, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error loading '%s'", fullOpenApiDefinitionUri), e);
+        }
     }
 
     private static OpenAPI parseOpenApiDefinition(String yaml, OpenApiRouteDefinitionLocatorProperties.Service service) {
