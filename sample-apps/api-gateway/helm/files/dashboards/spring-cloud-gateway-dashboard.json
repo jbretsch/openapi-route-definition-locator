@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 10280,
   "graphTooltip": 0,
-  "iteration": 1653682399965,
+  "iteration": 1670779086414,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -498,99 +498,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
-          "expr": "rate(openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{instance=\"$instance\", application=\"$application\",retrieval_result=\"success\"}[$__rate_interval])*60",
+          "expr": "sum by (upstream_service)(rate(openapi_route_definition_locator_openapi_definition_updates_seconds_count{instance=\"$instance\", application=\"$application\",update_result=\"success\"}[$__rate_interval])*60)",
           "interval": "",
           "legendFormat": "{{upstream_service}}",
           "refId": "A"
         }
       ],
       "title": "Successful OpenAPI definition retrievals per minute",
-      "type": "timeseries"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 15
-      },
-      "id": 123,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "openapi_route_definition_locator_openapi_definition_retrievals_seconds{instance=\"$instance\", application=\"$application\",retrieval_result=\"success\",quantile=\"0.98\"}",
-          "interval": "",
-          "legendFormat": "{{upstream_service}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Successful OpenAPI definition retrieval times (98th percentile)",
       "type": "timeseries"
     },
     {
@@ -648,8 +562,8 @@
       "gridPos": {
         "h": 7,
         "w": 12,
-        "x": 0,
-        "y": 22
+        "x": 12,
+        "y": 15
       },
       "id": 113,
       "options": {
@@ -669,7 +583,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
-          "expr": "rate(openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{instance=\"$instance\", application=\"$application\",retrieval_result=\"failure\"}[$__rate_interval])*60",
+          "expr": "sum by (upstream_service)(rate(openapi_route_definition_locator_openapi_definition_updates_seconds_count{instance=\"$instance\", application=\"$application\",update_result=\"failure\"}[$__rate_interval])*60)",
           "interval": "",
           "legendFormat": "{{upstream_service}}",
           "refId": "A"
@@ -684,7 +598,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 22
       },
       "id": 8,
       "panels": [],
@@ -776,7 +690,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 23
       },
       "id": 10,
       "links": [],
@@ -877,7 +791,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 23
       },
       "id": 14,
       "links": [],
@@ -978,7 +892,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 37
+        "y": 30
       },
       "id": 6,
       "links": [],
@@ -1079,7 +993,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 37
+        "y": 30
       },
       "id": 16,
       "links": [],
@@ -1180,7 +1094,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 37
+        "y": 30
       },
       "id": 20,
       "links": [],
@@ -1278,8 +1192,8 @@
       {
         "current": {
           "selected": false,
-          "text": "10.1.0.208:8080",
-          "value": "10.1.0.208:8080"
+          "text": "10.1.0.75:8080",
+          "value": "10.1.0.75:8080"
         },
         "datasource": {
           "uid": "${DS_PROMETHEUS}"

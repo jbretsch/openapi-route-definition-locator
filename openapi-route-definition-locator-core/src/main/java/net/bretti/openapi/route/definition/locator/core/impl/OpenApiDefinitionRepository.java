@@ -29,12 +29,16 @@ import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefin
 import net.bretti.openapi.route.definition.locator.core.impl.utils.MapMerge;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import org.springframework.cloud.gateway.event.RefreshRoutesResultEvent;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -44,6 +48,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,16 +58,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_NAME_RETRIEVALS;
-import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_RETRIEVAL_RESULT;
-import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_RETRIEVAL_RESULT_FAILURE;
-import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_RETRIEVAL_RESULT_SUCCESS;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_NAME_UPDATES;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED_FAILURE_PUBLICATION;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED_FAILURE_RETRIEVAL;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED_SUCCESS_WITHOUT_CHANGES;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED_SUCCESS_WITH_CHANGES;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_FAILURE;
+import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_SUCCESS;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPSTREAM_SERVICE;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 @RequiredArgsConstructor
 @Slf4j
-public class OpenApiDefinitionRepository {
+public class OpenApiDefinitionRepository implements ApplicationListener<RefreshRoutesResultEvent> {
     private static final String X_GATEWAY_ROUTE_SETTINGS = "x-gateway-route-settings";
     private static final String FILTERS = "filters";
     private static final String PREDICATES = "predicates";
@@ -77,49 +87,60 @@ public class OpenApiDefinitionRepository {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Optional<OpenApiRouteDefinitionLocatorTimedMetrics> metrics;
     private final ResourceLoader resourceLoader;
+    private Throwable lastRouteDefinitionPublicationFailureCause;
 
     void getOpenApiDefinitions() {
-        List<Boolean> gotUpdates = config.getServices().stream()
-                .map(this::getAndUpdateOperations)
-                .collect(Collectors.toList());
-
-        boolean gotAnyUpdates = gotUpdates.contains(true);
-        if (gotAnyUpdates) {
-            applicationEventPublisher.publishEvent(new RefreshRoutesEvent(this));
-        }
+        config.getServices().forEach(this::getAndUpdateOperationsSafely);
     }
 
     int getRegisteredOperationsCount(OpenApiRouteDefinitionLocatorProperties.Service service) {
         return Optional.ofNullable(operations.get(service)).orElse(Collections.emptyList()).size();
     }
 
-    private boolean getAndUpdateOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
+    private void getAndUpdateOperationsSafely(OpenApiRouteDefinitionLocatorProperties.Service service) {
+        try {
+            getAndUpdateOperations(service);
+        } catch (Exception e) {
+            log.error("Unexpected error while retrieving and publishing REST operations for {}", service.getId(), e);
+        }
+    }
+
+    private void getAndUpdateOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
         long start = System.nanoTime();
+        List<OpenApiOperation> oldOpenApiOperations = operations.get(service);
         try {
             log.info("Getting list of operations for {}", service.getId());
             List<OpenApiOperation> newOpenApiOperations = getOperations(service);
-            firstRetrievalFailures.remove(service);
-            List<OpenApiOperation> oldOpenApiOperations = operations.get(service);
-            if (!newOpenApiOperations.equals(oldOpenApiOperations)) {
-                log.info("Got new list of {} operations for {}", newOpenApiOperations.size(), service.getId());
-                operations.put(service, newOpenApiOperations);
-                metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_SUCCESS, start);
-                return true;
+
+            if (newOpenApiOperations.equals(oldOpenApiOperations)) {
+                log.info("List of {} operations is unchanged for {}", oldOpenApiOperations.size(), service.getId());
+                firstRetrievalFailures.remove(service);
+                metricsRecordRetrievalResult(service, METRIC_TAG_UPDATE_RESULT_SUCCESS,
+                        METRIC_TAG_UPDATE_RESULT_DETAILED_SUCCESS_WITHOUT_CHANGES, start);
+                return;
             }
-            log.info("List of {} operations is unchanged for {}", oldOpenApiOperations.size(), service.getId());
-            metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_SUCCESS, start);
-            return false;
+
+            log.info("Got new list of {} operations for {}", newOpenApiOperations.size(), service.getId());
+            operations.put(service, newOpenApiOperations);
+            publishNewOpenApiOperationsAndRollbackOnFailure(service, oldOpenApiOperations);
+
+            // Only reached if no rollback was performed.
+            firstRetrievalFailures.remove(service);
+            metricsRecordRetrievalResult(service, METRIC_TAG_UPDATE_RESULT_SUCCESS,
+                    METRIC_TAG_UPDATE_RESULT_DETAILED_SUCCESS_WITH_CHANGES, start);
         } catch (Exception e) {
-            metricsRecordRetrievalResult(service, METRIC_TAG_RETRIEVAL_RESULT_FAILURE, start);
-            log.error("Error while retrieving REST operations for {}", service.getId(), e);
+            String updateResultFailureDetailed = e instanceof OpenApiRouteDefinitionPublishException
+                    ? METRIC_TAG_UPDATE_RESULT_DETAILED_FAILURE_PUBLICATION
+                    : METRIC_TAG_UPDATE_RESULT_DETAILED_FAILURE_RETRIEVAL;
+            metricsRecordRetrievalResult(service, METRIC_TAG_UPDATE_RESULT_FAILURE, updateResultFailureDetailed, start);
+            log.error("Error while retrieving and publishing REST operations for {}", service.getId(), e);
             Instant now = Instant.now();
             Instant firstRetrievalFailure = firstRetrievalFailures.computeIfAbsent(service, k -> now);
 
-            List<OpenApiOperation> oldOpenApiOperations = operations.get(service);
-            if (oldOpenApiOperations == null || oldOpenApiOperations.isEmpty()) {
-                log.error("Retrieving operations for {} keeps failing since {}. Currently, no operations for this " +
+            if (CollectionUtils.isEmpty(oldOpenApiOperations)) {
+                log.error("Retrieving and publishing operations for {} keeps failing since {}. Currently, no operations for this " +
                           "service are registered.", service.getId(), firstRetrievalFailure);
-                return false;
+                return;
             }
 
             Duration removeAfterDuration = config.getUpdateScheduler().getRemoveRoutesOnUpdateFailuresAfter();
@@ -127,28 +148,30 @@ public class OpenApiDefinitionRepository {
 
             if (now.isAfter(removeAfterInstant)) {
                 operations.remove(service);
-                log.error("De-registering operations of {}. First retrieval failure was at {}. " +
+                log.error("De-registering operations of {}. First retrieval/publishing failure was at {}. " +
                           "That is more than {} ago.", service.getId(), firstRetrievalFailure, removeAfterDuration);
-                return true;
+                publishNewOpenApiOperations(service);
+                return;
             }
 
-            log.error("Keeping operations of {} despite retrieval failure. First retrieval failure was at {}. " +
-                      "That is less than {} ago. If retrieval keeps failing, operations of that service will be " +
+            log.error("Keeping operations of {} despite retrieval/publishing failure. First failure was at {}. " +
+                      "That is less than {} ago. If attempts keep failing, operations of that service will be " +
                       "de-registered after {}.", service.getId(), firstRetrievalFailure, removeAfterDuration,
                       removeAfterInstant);
-            return false;
         }
     }
 
     private void metricsRecordRetrievalResult(
             OpenApiRouteDefinitionLocatorProperties.Service service,
-            String metricRetrievalResult,
+            String metricUpdateResult,
+            String metricUpdateResultDetailed,
             long startNanoTime
     ) {
         metrics.ifPresent(metrics1 -> {
             long endNanoTime = System.nanoTime();
-            metrics1.recordTime(METRIC_NAME_RETRIEVALS, (endNanoTime- startNanoTime), TimeUnit.NANOSECONDS,
-                    METRIC_TAG_RETRIEVAL_RESULT, metricRetrievalResult,
+            metrics1.recordTime(METRIC_NAME_UPDATES, (endNanoTime- startNanoTime), TimeUnit.NANOSECONDS,
+                    METRIC_TAG_UPDATE_RESULT, metricUpdateResult,
+                    METRIC_TAG_UPDATE_RESULT_DETAILED, metricUpdateResultDetailed,
                     METRIC_TAG_UPSTREAM_SERVICE, service.getId());
         });
     }
@@ -335,4 +358,43 @@ public class OpenApiDefinitionRepository {
         return Optional.of((Map<String, Object>)gatewayMetadata);
     }
 
+    private void publishNewOpenApiOperationsAndRollbackOnFailure(
+            OpenApiRouteDefinitionLocatorProperties.Service service,
+            List<OpenApiOperation> oldOpenApiOperations
+    ) {
+        try {
+            publishNewOpenApiOperations(service);
+        } catch (Exception e) {
+            if (oldOpenApiOperations == null) {
+                operations.remove(service);
+            } else {
+                operations.put(service, oldOpenApiOperations);
+            }
+            publishNewOpenApiOperations(service);
+            throw e;
+        }
+    }
+
+    private void publishNewOpenApiOperations(OpenApiRouteDefinitionLocatorProperties.Service service) {
+        lastRouteDefinitionPublicationFailureCause = null;
+        applicationEventPublisher.publishEvent(new RefreshRoutesEvent(this));
+        if (lastRouteDefinitionPublicationFailureCause != null) {
+            throw new OpenApiRouteDefinitionPublishException(String.format("Error while publishing route" +
+                    " definitions for %s", service.getId()), lastRouteDefinitionPublicationFailureCause);
+        }
+    }
+
+    @Override
+    public void onApplicationEvent(@NonNull RefreshRoutesResultEvent event) {
+        if (event.isSuccess()) {
+            return;
+        }
+
+        boolean isErrorCausedByThisClass = Arrays.stream(event.getThrowable().getStackTrace())
+                .anyMatch(t -> t.getClassName().equals(this.getClass().getCanonicalName()));
+
+        if (isErrorCausedByThisClass) {
+            lastRouteDefinitionPublicationFailureCause = event.getThrowable();
+        }
+    }
 }

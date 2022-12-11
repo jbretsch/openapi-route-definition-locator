@@ -289,4 +289,81 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
     }
 
+    def "Error in OpenAPI definition of service A does not affect routes for service B"() {
+        given:
+        waitForRemovalOfAllRoutes()
+
+        and: 'OpenAPI definition of one of two services contains an unknown Spring Cloud Gateway Filter'
+        UserServiceMock.instance.mockOpenApiDefinition()
+        OrderServiceMock.instance.mockOpenApiDefinitionContainingUnknownFilter()
+
+        when: 'having waited for gateway to discover all services'
+        sleep(maxWaitTimeForRouteAddition.toMillis())
+
+        then: 'all services with valid OpenAPI definition have been registered'
+        List routes = getRoutesFromActuatorEndpoint()
+        getRoutesFromActuatorEndpoint().size() == 3
+
+        extractRoute(routes, "GET", "/users") != null
+        extractRoute(routes, "GET", "/users/{userId}") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders") == null
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
+        extractRoute(routes, "POST", "/users/{userId}/orders") == null
+        extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
+
+        when: 'service with previously erroneous OpenAPI definition now has valid OpenAPI definition'
+        OrderServiceMock.instance.resetAll()
+        OrderServiceMock.instance.mockOpenApiDefinition()
+
+        and: 'having waited for operations to have been published'
+        waitForRouteAddition {
+            assert getRoutesFromActuatorEndpoint().size() == 6
+        }
+        routes = getRoutesFromActuatorEndpoint()
+
+        then: 'routes for service with now valid OpenAPI definition are registered'
+        extractRoute(routes, "GET", "/users") != null
+        extractRoute(routes, "GET", "/users/{userId}") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
+        extractRoute(routes, "POST", "/users/{userId}/orders") != null
+        extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
+
+        when: 'service now has erroneous OpenAPI definition again'
+        OrderServiceMock.instance.resetAll()
+        OrderServiceMock.instance.mockOpenApiDefinitionContainingUnknownFilter()
+
+        and: 'having waited for operations to have been removed'
+        waitForRouteRemoval {
+            assert getRoutesFromActuatorEndpoint().size() == 3
+        }
+        routes = getRoutesFromActuatorEndpoint()
+
+        then: 'routes for service with erroneous OpenAPI definition have been removed'
+        extractRoute(routes, "GET", "/users") != null
+        extractRoute(routes, "GET", "/users/{userId}") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders") == null
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
+        extractRoute(routes, "POST", "/users/{userId}/orders") == null
+        extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
+
+        when: 'service with previously erroneous OpenAPI definition now has valid OpenAPI definition'
+        OrderServiceMock.instance.resetAll()
+        OrderServiceMock.instance.mockOpenApiDefinition()
+
+        and: 'having waited for operations to have been published'
+        waitForRouteAddition {
+            assert getRoutesFromActuatorEndpoint().size() == 6
+        }
+        routes = getRoutesFromActuatorEndpoint()
+
+        then: 'routes for service with now valid OpenAPI definition are registered'
+        extractRoute(routes, "GET", "/users") != null
+        extractRoute(routes, "GET", "/users/{userId}") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders") != null
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
+        extractRoute(routes, "POST", "/users/{userId}/orders") != null
+        extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
+    }
+
 }

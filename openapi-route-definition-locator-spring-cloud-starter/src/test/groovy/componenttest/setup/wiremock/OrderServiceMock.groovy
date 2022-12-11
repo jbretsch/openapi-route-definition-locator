@@ -42,6 +42,16 @@ class OrderServiceMock extends BaseWireMock {
         )
     }
 
+    void mockOpenApiDefinitionContainingUnknownFilter() {
+        client.register(get(urlPathEqualTo("/custom-path-to/openapi-definition"))
+            .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/yaml")
+                    .withBodyFile("order-service/openapi.public.unknown-filter.yaml")
+            )
+        )
+    }
+
     void mockGetOrders() {
         client.register(get(urlPathMatching("/api/users/.*?/orders"))
             .willReturn(aResponse()

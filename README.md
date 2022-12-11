@@ -445,41 +445,41 @@ you can expect output like this:
 openapi_route_definition_locator_routes_count{upstream_service="service-users",} 2.0
 openapi_route_definition_locator_routes_count{upstream_service="service-orders",} 1.0
 
-# HELP openapi_route_definition_locator_openapi_definition_retrievals_seconds Time and count of attempts to retrieve the OpenAPI definition of registered services.
-# TYPE openapi_route_definition_locator_openapi_definition_retrievals_seconds summary
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-orders",quantile="0.5",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-orders",quantile="0.8",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-orders",quantile="0.95",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-orders",quantile="0.98",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{retrieval_result="success",upstream_service="service-orders",} 14.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_sum{retrieval_result="success",upstream_service="service-orders",} 0.265787763
+# HELP openapi_route_definition_locator_openapi_definition_updates_seconds_max Time and count of attempts to update the route definitions for registered services based on their OpenAPI definitions.
+# TYPE openapi_route_definition_locator_openapi_definition_updates_seconds_max gauge
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",quantile="0.5",} 0.243269632
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",quantile="0.8",} 0.243269632
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",quantile="0.95",} 0.243269632
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",quantile="0.98",} 0.243269632
+openapi_route_definition_locator_openapi_definition_updates_seconds_count{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",} 1.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_sum{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",} 0.248666992
 
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-users",quantile="0.5",} 0.01048576
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-users",quantile="0.8",} 0.013631488
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-users",quantile="0.95",} 0.013631488
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="success",upstream_service="service-users",quantile="0.98",} 0.013631488
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{retrieval_result="success",upstream_service="service-users",} 16.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_sum{retrieval_result="success",upstream_service="service-users",} 0.742483821
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",quantile="0.5",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",quantile="0.8",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",quantile="0.95",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",quantile="0.98",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_count{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_sum{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",} 0.0
 
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-orders",quantile="0.5",} 0.018874368
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-orders",quantile="0.8",} 0.108003328
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-orders",quantile="0.95",} 0.108003328
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-orders",quantile="0.98",} 0.108003328
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{retrieval_result="failure",upstream_service="service-orders",} 2.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_sum{retrieval_result="failure",upstream_service="service-orders",} 0.127437274
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",quantile="0.5",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",quantile="0.8",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",quantile="0.95",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",quantile="0.98",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_count{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_sum{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",} 0.0
 
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-users",quantile="0.5",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-users",quantile="0.8",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-users",quantile="0.95",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds{retrieval_result="failure",upstream_service="service-users",quantile="0.98",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_count{retrieval_result="failure",upstream_service="service-users",} 0.0
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_sum{retrieval_result="failure",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",quantile="0.5",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",quantile="0.8",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",quantile="0.95",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",quantile="0.98",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_count{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_sum{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",} 0.0
 
-# HELP openapi_route_definition_locator_openapi_definition_retrievals_seconds_max Time and count of attempts to retrieve the OpenAPI definition of registered services.
-# TYPE openapi_route_definition_locator_openapi_definition_retrievals_seconds_max gauge
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_max{retrieval_result="success",upstream_service="service-orders",} 0.034150183
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_max{retrieval_result="success",upstream_service="service-users",} 0.017678204
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_max{retrieval_result="failure",upstream_service="service-orders",} 0.108324783
-openapi_route_definition_locator_openapi_definition_retrievals_seconds_max{retrieval_result="failure",upstream_service="service-users",} 0.0
+# HELP openapi_route_definition_locator_openapi_definition_updates_seconds_max Time and count of attempts to update the route definitions for registered services based on their OpenAPI definitions.
+# TYPE openapi_route_definition_locator_openapi_definition_updates_seconds_max gauge
+openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="success",update_result_detailed="success_with_route_changes",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="success",update_result_detailed="success_without_route_changes",upstream_service="service-users",} 0.542245334
+openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",} 0.0
+openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",} 0.0
 ```
 
