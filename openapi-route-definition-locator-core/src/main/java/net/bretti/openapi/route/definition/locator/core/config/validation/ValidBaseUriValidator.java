@@ -18,8 +18,8 @@
 
 package net.bretti.openapi.route.definition.locator.core.config.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.net.URI;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;

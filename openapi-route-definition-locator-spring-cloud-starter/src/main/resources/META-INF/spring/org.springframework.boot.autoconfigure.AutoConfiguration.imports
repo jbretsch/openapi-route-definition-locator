@@ -1,0 +1,2 @@
+net.bretti.openapi.route.definition.locator.autoconfigure.OpenApiRouteDefinitionLocatorAutoConfiguration
+net.bretti.openapi.route.definition.locator.autoconfigure.OpenApiRouteDefinitionLocatorMetricsAutoConfiguration

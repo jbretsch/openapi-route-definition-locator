@@ -27,12 +27,11 @@ dependencies {
 
 java {
     toolchain {
-        // Keep the same Java compatibility as Spring Cloud Gateway.
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
-    environment = mapOf("BP_JVM_VERSION" to "17")
-    imageName = "bretti.net/sample-service-orders:latest"
+    environment.set(mapOf("BP_JVM_VERSION" to "17"))
+    imageName.set("bretti.net/sample-service-orders:latest")
 }

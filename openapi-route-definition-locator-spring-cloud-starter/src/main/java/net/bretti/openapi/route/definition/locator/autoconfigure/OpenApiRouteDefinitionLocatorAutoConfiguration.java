@@ -24,14 +24,13 @@ import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRe
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionUpdateScheduler;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocator;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorTimedMetrics;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -39,8 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Configuration(proxyBeanMethods = false)
-@AutoConfigureAfter(GatewayAutoConfiguration.class)
+@AutoConfiguration(after = GatewayAutoConfiguration.class)
 @ConditionalOnBean(GatewayAutoConfiguration.class)
 @ConditionalOnProperty(value = "openapi-route-definition-locator.enabled", matchIfMissing = true)
 @EnableConfigurationProperties

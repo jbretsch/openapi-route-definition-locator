@@ -19,10 +19,9 @@ the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().a
     }
 }
 
-val springCloudDependenciesVersion = "2021.0.6"
+val springCloudDependenciesVersion = "2022.0.2"
 val lombokVersion = "1.18.26"
-val spockVersion = "2.3-groovy-3.0"
-val groovyVersion = "3.0.16"
+val spockVersion = "2.4-M1-groovy-4.0"
 
 dependencies {
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudDependenciesVersion}"))
@@ -37,7 +36,7 @@ dependencies {
     testImplementation(platform("org.spockframework:spock-bom:${spockVersion}"))
     testImplementation("org.spockframework:spock-spring")
 
-    testImplementation("org.codehaus.groovy:groovy-all:${groovyVersion}")
+    testImplementation("org.apache.groovy:groovy-json")
 }
 
 java {
@@ -45,7 +44,7 @@ java {
     version = "0.6.2-SNAPSHOT"
     toolchain {
         // Keep the same Java compatibility as Spring Cloud Gateway.
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
     withJavadocJar()
     withSourcesJar()

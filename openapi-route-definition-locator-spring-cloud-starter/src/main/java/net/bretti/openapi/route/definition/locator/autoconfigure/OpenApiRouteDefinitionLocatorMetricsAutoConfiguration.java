@@ -23,16 +23,14 @@ import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefin
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRepository;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorTimedMetrics;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration;
 import org.springframework.cloud.gateway.route.RouteDefinitionMetrics;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration(proxyBeanMethods = false)
-@AutoConfigureAfter({OpenApiRouteDefinitionLocatorAutoConfiguration.class, GatewayMetricsAutoConfiguration.class})
+@AutoConfiguration(after = {OpenApiRouteDefinitionLocatorAutoConfiguration.class, GatewayMetricsAutoConfiguration.class})
 @ConditionalOnProperty(name = "openapi-route-definition-locator.metrics.enabled", matchIfMissing = true)
 @ConditionalOnBean({ OpenApiDefinitionRepository.class, OpenApiRouteDefinitionLocatorProperties.class,
         RouteDefinitionMetrics.class, MeterRegistry.class })

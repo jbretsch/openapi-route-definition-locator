@@ -16,7 +16,7 @@ tasks.jar {
 }
 
 dependencies {
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.6"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2022.0.2"))
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")
     implementation(project(":openapi-route-definition-locator-spring-cloud-starter"))
     runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
@@ -26,11 +26,11 @@ dependencies {
 java {
     toolchain {
         // Keep the same Java compatibility as Spring Cloud Gateway.
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
-    environment = mapOf("BP_JVM_VERSION" to "17")
-    imageName = "bretti.net/sample-api-gateway:latest"
+    environment.set(mapOf("BP_JVM_VERSION" to "17"))
+    imageName.set("bretti.net/sample-api-gateway:latest")
 }

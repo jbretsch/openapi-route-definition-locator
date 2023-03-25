@@ -11,16 +11,6 @@ spring:
         pool:
           metrics: true
         wiretap: true
-      metrics:
-        enabled: true
-  management:
-    endpoints:
-      web:
-        exposure:
-          include:
-            - health
-            - info
-            - prometheus
 
 logging:
   level:
@@ -33,6 +23,9 @@ logging:
     redisratelimiter: debug
 
 management:
+  endpoint:
+    gateway:
+      enabled: true
   endpoints:
     web:
       exposure:
