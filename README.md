@@ -33,6 +33,13 @@ API resources automatically configured during runtime. This works roughly as fol
 
 ![Overview](docs/images/overview.png)
 
+## Versioning scheme and compatibility
+
+| Version         | Spring Cloud | Spring Boot  | Minimum Java Version |
+|-----------------|--------------|--------------|----------------------|
+| x.y.z-sc-2022.0 | 2022.0.x     | 3.0.x        | 17                   |
+| x.y.z-sc-2021.0 | 2021.0.x     | 2.6.x, 2.7.x | 8                    |
+
 ## Usage
 
 ### Quickstart
