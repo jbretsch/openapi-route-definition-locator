@@ -22,7 +22,6 @@ the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().a
 val springCloudDependenciesVersion = "2021.0.6"
 val lombokVersion = "1.18.26"
 val spockVersion = "2.3-groovy-3.0"
-val groovyVersion = "3.0.16"
 
 dependencies {
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudDependenciesVersion}"))
@@ -37,7 +36,7 @@ dependencies {
     testImplementation(platform("org.spockframework:spock-bom:${spockVersion}"))
     testImplementation("org.spockframework:spock-spring")
 
-    testImplementation("org.codehaus.groovy:groovy-all:${groovyVersion}")
+    testImplementation("org.codehaus.groovy:groovy-json")
 }
 
 java {

@@ -27,7 +27,6 @@ dependencies {
 
 java {
     toolchain {
-        // Keep the same Java compatibility as Spring Cloud Gateway.
         languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
