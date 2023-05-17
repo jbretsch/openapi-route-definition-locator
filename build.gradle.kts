@@ -1,6 +1,6 @@
 defaultTasks("clean", "build")
 
 tasks.wrapper {
-    gradleVersion = "8.0.2"
+    gradleVersion = "8.1.1"
     distributionType = Wrapper.DistributionType.ALL
 }
