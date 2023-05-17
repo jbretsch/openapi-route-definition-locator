@@ -17,7 +17,7 @@ dependencies {
 
 javaPlatform {
     group = "net.bretti.openapi-route-definition-locator"
-    version = "0.6.3-SNAPSHOT-sc-2022.0"
+    version = "0.6.3-sc-2022.0"
 }
 
 publishing {
