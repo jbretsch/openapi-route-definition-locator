@@ -241,7 +241,7 @@ public class OpenApiDefinitionRepository implements ApplicationListener<RefreshR
     }
 
     private static HttpMethod map(PathItem.HttpMethod method) {
-        return HttpMethod.resolve(method.name());
+        return HttpMethod.valueOf(method.name());
     }
 
     private static Optional<Map<String, Object>> getGatewayRouteSettings(Map<String, Object> extensions) {
