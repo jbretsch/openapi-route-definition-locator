@@ -32,9 +32,21 @@ management:
 
 openapi-route-definition-locator:
   # enabled: false
+  default-route-settings:
+    filters:
+      - AddResponseHeader=X-Response-DefaultForAllServices, sample-value-all
+    order: 5
+    metadata:
+      defaultForAllServices: "OptionValueAll"
   services:
     - id: user-service
       uri: http://localhost:9091
+      default-route-settings:
+        filters:
+          - AddResponseHeader=X-Response-DefaultForOneService, sample-value-one
+        order: 6
+        metadata:
+          defaultForOneService: "OptionValueOne"
     - id: order-service
       uri: http://localhost:9092
       openapi-definition-uri: /custom-path-to/openapi-definition

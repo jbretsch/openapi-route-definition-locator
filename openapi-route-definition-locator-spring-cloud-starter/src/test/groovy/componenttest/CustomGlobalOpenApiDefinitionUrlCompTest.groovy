@@ -58,30 +58,45 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
 
         then:
         Map getUsersRoute = extractRoute(routes, "GET", "/users")
-        getUsersRoute.predicate == "(Methods: [GET] && Paths: [/users], match trailing slash: true)"
+        getUsersRoute.predicate == "((Methods: [GET] && Paths: [/users], match trailing slash: true) && Header: Authorization regexp=null)"
         getUsersRoute.route_id != null
         getUsersRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Auth-Type-Was = 'Application'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForOneService = 'sample-value-one'], order = 2]",
+                "[[AddResponseHeader X-Auth-Type-Was = 'Application'], order = 3]",
         ]
         getUsersRoute.uri == "http://localhost:9091"
-        getUsersRoute.order == 0
-        getUsersRoute.size() == 5
+        getUsersRoute.order == 6
+        getUsersRoute.metadata == [
+                defaultForAllServices                    : 'OptionValueAll',
+                defaultForOneService                     : 'OptionValueOne',
+                AddedByXAuthTypeRouteDefinitionCustomizer: 'Application',
+        ]
+        getUsersRoute.size() == 6
 
         and:
         Map getUserRoute = extractRoute(routes, "GET", "/users/{userId}")
         getUserRoute.predicate ==
-                "(((Methods: [GET] && Paths: [/users/{userId}], match trailing slash: true) && " +
+                "((((Methods: [GET] && Paths: [/users/{userId}], match trailing slash: true) && " +
                 "After: 2022-01-20T17:42:47.789+01:00[Europe/Berlin]) && " +
-                "Header: Required-Test-Header regexp=required-test-header-.*)"
+                "Header: Required-Test-Header regexp=required-test-header-.*) && " +
+                "Header: Authorization regexp=null)"
         getUserRoute.route_id != null
         getUserRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Auth-Type-Was = 'Application User'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForOneService = 'sample-value-one'], order = 2]",
+                "[[AddResponseHeader X-Auth-Type-Was = 'Application User'], order = 3]",
         ]
         getUserRoute.uri == "http://localhost:9091"
-        getUserRoute.order == 0
-        getUserRoute.size() == 5
+        getUserRoute.order == 6
+        getUserRoute.metadata == [
+                defaultForAllServices                    : 'OptionValueAll',
+                defaultForOneService                     : 'OptionValueOne',
+                AddedByXAuthTypeRouteDefinitionCustomizer: 'Application User',
+        ]
+        getUserRoute.size() == 6
 
         and:
         Map getOrdersRoute = extractRoute(routes, "GET", "/users/{userId}/orders")
@@ -89,20 +104,22 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getOrdersRoute.route_id != null
         getOrdersRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 1]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 2]",
-                "[[SetStatus status = '418'], order = 3]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[PrefixPath prefix = '/api'], order = 2]",
+                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
+                "[[SetStatus status = '418'], order = 4]",
         ]
         getOrdersRoute.uri == "http://localhost:9092"
         getOrdersRoute.order == 1
         getOrdersRoute.metadata == [
-                optionName     : "OptionValue",
-                compositeObject: [
+                optionName           : "OptionValue",
+                compositeObject      : [
                         name     : "value",
                         otherName: 2,
                 ],
-                aList          : ["foo", "bar", "quuz"],
-                iAmNumber      : 1,
+                aList                : ["foo", "bar", "quuz"],
+                defaultForAllServices: 'OptionValueAll',
+                iAmNumber            : 1,
         ]
         getOrdersRoute.size() == 6
 
@@ -112,17 +129,19 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getOrderRoute.route_id != null
         getOrderRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 1]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 2]",
-                "[[SetStatus status = '418'], order = 3]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[PrefixPath prefix = '/api'], order = 2]",
+                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
+                "[[SetStatus status = '418'], order = 4]",
         ]
         getOrderRoute.uri == "http://localhost:9092"
         getOrderRoute.order == 1
         getOrderRoute.metadata == [
-                optionName     : "OptionValue",
-                compositeObject: [name: "value"],
-                aList          : ["foo", "bar"],
-                iAmNumber      : 1,
+                optionName           : "OptionValue",
+                compositeObject      : [name: "value"],
+                aList                : ["foo", "bar"],
+                defaultForAllServices: 'OptionValueAll',
+                iAmNumber            : 1,
         ]
         getOrderRoute.size() == 6
 
@@ -132,16 +151,18 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         postOrderRoute.route_id != null
         postOrderRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 1]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 2]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[PrefixPath prefix = '/api'], order = 2]",
+                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
         ]
         postOrderRoute.uri == "http://localhost:9092"
         postOrderRoute.order == 1
         postOrderRoute.metadata == [
-                optionName     : "OptionValue",
-                compositeObject: [name: "value"],
-                aList          : ["foo", "bar"],
-                iAmNumber      : 1,
+                optionName           : "OptionValue",
+                compositeObject      : [name: "value"],
+                aList                : ["foo", "bar"],
+                defaultForAllServices: 'OptionValueAll',
+                iAmNumber            : 1,
         ]
         postOrderRoute.size() == 6
 
@@ -151,10 +172,12 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getThingsRoute.route_id != null
         getThingsRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
         ]
         getThingsRoute.uri == "http://localhost:9093"
-        getThingsRoute.order == 0
-        getThingsRoute.size() == 5
+        getThingsRoute.order == 5
+        getThingsRoute.metadata == [defaultForAllServices: 'OptionValueAll']
+        getThingsRoute.size() == 6
 
         and:
         Map getOpenApiInClassPathEntitiesRoute = extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath")
@@ -162,14 +185,33 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getOpenApiInClassPathEntitiesRoute.route_id != null
         getOpenApiInClassPathEntitiesRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
+                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
         ]
         getOpenApiInClassPathEntitiesRoute.uri == "http://localhost:9095"
-        getOpenApiInClassPathEntitiesRoute.order == 0
-        getOpenApiInClassPathEntitiesRoute.size() == 5
+        getOpenApiInClassPathEntitiesRoute.order == 5
+        getOpenApiInClassPathEntitiesRoute.metadata == [defaultForAllServices: 'OptionValueAll']
+        getOpenApiInClassPathEntitiesRoute.size() == 6
+
+        when:
+        FluxExchangeResult<String> getUsersWithoutHeaderResponse = webTestClient
+                .get().uri("http://localhost:${localServerPort}/users")
+                .exchange().returnResult(String)
+
+        then:
+        getUsersWithoutHeaderResponse.getRawStatusCode() == 404
+        String getUsersWithoutHeaderResponseBody = getUsersWithoutHeaderResponse.getResponseBody().blockFirst()
+        Map getUsersWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUsersWithoutHeaderResponseBody) as Map
+        getUsersWithoutHeaderResponseBodyJson.timestamp != null
+        getUsersWithoutHeaderResponseBodyJson.path == "/users"
+        getUsersWithoutHeaderResponseBodyJson.status == 404
+        getUsersWithoutHeaderResponseBodyJson.error == "Not Found"
+        getUsersWithoutHeaderResponseBodyJson.message == null
+        getUsersWithoutHeaderResponseBodyJson.requestId != null
 
         when:
         FluxExchangeResult<String> getUsersResponse = webTestClient
                 .get().uri("http://localhost:${localServerPort}/users")
+                .header("Authorization", "Bearer someToken")
                 .exchange().returnResult(String)
 
         then:
@@ -196,6 +238,7 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         when:
         FluxExchangeResult<String> getUserResponse = webTestClient
                 .get().uri("http://localhost:${localServerPort}/users/${USER_ID}")
+                .header("Authorization", "Bearer someToken")
                 .header("Required-Test-Header", "required-test-header-value")
                 .exchange().returnResult(String)
 
