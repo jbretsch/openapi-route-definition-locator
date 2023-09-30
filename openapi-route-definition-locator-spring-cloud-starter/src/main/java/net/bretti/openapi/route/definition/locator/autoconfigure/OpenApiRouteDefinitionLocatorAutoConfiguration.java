@@ -64,9 +64,11 @@ public class OpenApiRouteDefinitionLocatorAutoConfiguration {
     @Bean
     public OpenApiRouteDefinitionLocator openApiRouteDefinitionLocator(
             OpenApiDefinitionRepository openApiDefinitionRepository,
-            List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers
+            List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers,
+            OpenApiRouteDefinitionLocatorProperties openApiRouteDefinitionLocatorProperties
     ) {
-        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository, openApiRouteDefinitionCustomizers);
+        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository, openApiRouteDefinitionCustomizers,
+                openApiRouteDefinitionLocatorProperties);
     }
 
     @Bean

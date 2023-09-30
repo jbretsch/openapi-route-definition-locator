@@ -23,6 +23,9 @@ import net.bretti.openapi.route.definition.locator.core.config.validation.OnlyUn
 import net.bretti.openapi.route.definition.locator.core.config.validation.ValidBaseUri;
 import net.bretti.openapi.route.definition.locator.core.config.validation.ValidOpenApiDefinitionUri;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.gateway.filter.FilterDefinition;
+import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
+import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -32,7 +35,10 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @ConfigurationProperties(prefix = "openapi-route-definition-locator")
 @Validated
@@ -48,6 +54,10 @@ public class OpenApiRouteDefinitionLocatorProperties {
     @Valid
     @OnlyUniqueServiceIds
     private List<Service> services = new ArrayList<>();
+
+    //TODO: Description.
+    @Valid
+    private DefaultRouteSettings defaultRouteSettings = new DefaultRouteSettings();
 
     /**
      * Configures the scheduler which periodically retrieves the OpenAPI definitions from
@@ -91,6 +101,10 @@ public class OpenApiRouteDefinitionLocatorProperties {
          */
         @ValidOpenApiDefinitionUri
         private URI openapiDefinitionUri;
+
+        //TODO: Description.
+        @Valid
+        private DefaultRouteSettings defaultRouteSettings = new DefaultRouteSettings();
     }
 
     @Data
@@ -112,4 +126,23 @@ public class OpenApiRouteDefinitionLocatorProperties {
         private Duration removeRoutesOnUpdateFailuresAfter = Duration.of(15, ChronoUnit.MINUTES);
     }
 
+    /**
+     * Subset of {@link RouteDefinition}.
+     */
+    @Data
+    public static class DefaultRouteSettings {
+        //TODO: Description.
+        @Valid
+        private List<PredicateDefinition> predicates = new ArrayList<>();
+
+        //TODO: Description.
+        @Valid
+        private List<FilterDefinition> filters = new ArrayList<>();
+
+        //TODO: Description.
+        private Map<String, Object> metadata = new HashMap<>();
+
+        //TODO: Description.
+        private Optional<Integer> order = Optional.empty();
+    }
 }
