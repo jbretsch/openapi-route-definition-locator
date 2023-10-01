@@ -20,6 +20,7 @@ package net.bretti.openapi.route.definition.locator.core.impl.utils;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,11 @@ import java.util.stream.Stream;
 public class MapMerge {
     public static Optional<Map<String, Object>> deepMerge(Optional<Map<String, Object>> original, Optional<Map<String, Object>> patch) {
         if (!patch.isPresent()) {
-            return original;
+            return original.map(it -> deepCopy(it, true));
         }
 
         if (!original.isPresent()) {
-            return patch;
+            return patch.map(it -> deepCopy(it, false));
         }
 
         return Optional.of(deepMerge(original.get(), patch.get()));
@@ -44,7 +45,7 @@ public class MapMerge {
     @SafeVarargs
     public static Optional<Map<String, Object>> deepMerge(Optional<Map<String, Object>> original, Optional<Map<String, Object>>... patches) {
         if (patches.length == 0) {
-            return original.map(HashMap::new);
+            return original.map(it -> deepCopy(it, true));
         }
 
         Optional<Map<String, Object>> result = original;
@@ -55,55 +56,88 @@ public class MapMerge {
     }
 
     /**
-     *
      * Deep merge Maps with semantics almost as defined in
      * <a href="https://datatracker.ietf.org/doc/html/rfc7386">https://datatracker.ietf.org/doc/html/rfc7386</a>.
      * There is one exception: Merging two lists is done by concatenating them.
      * Returns the result.
      */
     private static Map<String, Object> deepMerge(Map<String, Object> original, Map<String, Object> patch) {
-        Map<String, Object> result = new HashMap<>(original);
+        Map<String, Object> result = deepCopy(original, true);
         for (Map.Entry<String, Object> patchEntry : patch.entrySet()) {
             String key = patchEntry.getKey();
             Object originalValue = original.get(key);
             Object patchValue = patchEntry.getValue();
             if (patchValue == null) {
                 result.remove(key);
-            } else if (originalValue instanceof Map && patchValue instanceof Map) {
-                result.put(key, deepMerge((Map<String, Object>)originalValue, (Map<String, Object>)patchValue));
-            } else if (originalValue instanceof List && patchValue instanceof List) {
-                result.put(key, union((List<Object>) originalValue, (List<Object>) patchValue));
-            } else if (patchValue instanceof Map) {
-                result.put(key, withoutNullValuesDeep((Map<String, Object>)patchValue));
-            } else {
-                result.put(key, patchValue);
-            }
-        }
-        return result;
-    }
-
-    private static Map<String, Object> withoutNullValuesDeep(Map<String, Object> map) {
-        Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            if (value == null) {
                 continue;
             }
 
-            if (value instanceof Map) {
-                result.put(key, withoutNullValuesDeep((Map<String, Object>)value));
-            } else {
-                result.put(key, value);
+            if (originalValue instanceof Map && patchValue instanceof Map) {
+                result.put(key, deepMerge((Map<String, Object>)originalValue, (Map<String, Object>)patchValue));
+                continue;
             }
+
+            if (originalValue instanceof List && patchValue instanceof List) {
+                result.put(key, union(deepCopy((List<Object>) originalValue, true), deepCopy((List<Object>) patchValue, false)));
+                continue;
+            }
+
+            if (patchValue instanceof Map) {
+                result.put(key, deepCopy((Map<String, Object>)patchValue, false));
+                continue;
+            }
+
+            result.put(key, patchValue);
         }
         return result;
-
     }
 
     @SafeVarargs
     private static <T> List<T> union(List<T>... lists) {
         return Stream.of(lists).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    private static List<Object> deepCopy(List<Object> list, boolean keepNullValuesInMaps) {
+        List<Object> result = new ArrayList<>();
+        for (Object item : list) {
+            if (item instanceof Map) {
+                result.add(deepCopy((Map<String, Object>) item, keepNullValuesInMaps));
+                continue;
+            }
+
+            if (item instanceof List) {
+                result.add(deepCopy((List<Object>) item, keepNullValuesInMaps));
+                continue;
+            }
+
+            result.add(item);
+        }
+        return result;
+    }
+
+    private static Map<String, Object> deepCopy(Map<String, Object> map, boolean keepNullValuesInMaps) {
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (value == null && !keepNullValuesInMaps) {
+                continue;
+            }
+
+            if (value instanceof Map) {
+                result.put(key, deepCopy((Map<String, Object>) value, keepNullValuesInMaps));
+                continue;
+            }
+
+            if (value instanceof List) {
+                result.put(key, deepCopy((List<Object>) value, keepNullValuesInMaps));
+                continue;
+            }
+
+            result.put(key, value);
+        }
+        return result;
     }
 
 }
