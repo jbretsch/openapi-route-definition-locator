@@ -55,7 +55,10 @@ public class OpenApiRouteDefinitionLocatorProperties {
     @OnlyUniqueServiceIds
     private List<Service> services = new ArrayList<>();
 
-    //TODO: Description.
+    /**
+     * Settings that should be added to all {@link RouteDefinition}s created for the configured
+     * {@link OpenApiRouteDefinitionLocatorProperties#services}.
+     */
     @Valid
     private DefaultRouteSettings defaultRouteSettings = new DefaultRouteSettings();
 
@@ -102,7 +105,9 @@ public class OpenApiRouteDefinitionLocatorProperties {
         @ValidOpenApiDefinitionUri
         private URI openapiDefinitionUri;
 
-        //TODO: Description.
+        /**
+         * Settings that should be applied to all {@link RouteDefinition}s created for this service.
+         */
         @Valid
         private DefaultRouteSettings defaultRouteSettings = new DefaultRouteSettings();
     }
@@ -127,22 +132,31 @@ public class OpenApiRouteDefinitionLocatorProperties {
     }
 
     /**
-     * Subset of {@link RouteDefinition}.
+     * Settings that should be applied to all created {@link RouteDefinition}s. Contains a subset of the attributes of a
+     * {@link RouteDefinition}.
      */
     @Data
     public static class DefaultRouteSettings {
-        //TODO: Description.
+        /**
+         * The predicates that should be added to the created {@link RouteDefinition}s.
+         */
         @Valid
         private List<PredicateDefinition> predicates = new ArrayList<>();
 
-        //TODO: Description.
+        /**
+         * The filters that should be added to the created {@link RouteDefinition}s.
+         */
         @Valid
         private List<FilterDefinition> filters = new ArrayList<>();
 
-        //TODO: Description.
+        /**
+         * The metadata that should be added to the created {@link RouteDefinition}s.
+         */
         private Map<String, Object> metadata = new HashMap<>();
 
-        //TODO: Description.
+        /**
+         * The order that should be applied to the created {@link RouteDefinition}s.
+         */
         private Optional<Integer> order = Optional.empty();
     }
 }
