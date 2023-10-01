@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
+
+import static net.bretti.openapi.route.definition.locator.core.impl.utils.Optionals.firstPresent;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -71,11 +72,11 @@ public class OpenApiRouteDefinitionLocator implements RouteDefinitionLocator {
             filters.addAll(operation.getFilters());
             routeDefinition.setFilters(filters);
 
-            Stream.of(operation.getOrder(), service.getDefaultRouteSettings().getOrder(), properties.getDefaultRouteSettings().getOrder())
-                    .filter(Optional::isPresent)
-                    .findFirst()
-                    .orElseGet(Optional::empty)
-                    .ifPresent(routeDefinition::setOrder);
+            firstPresent(
+                    operation.getOrder(),
+                    service.getDefaultRouteSettings().getOrder(),
+                    properties.getDefaultRouteSettings().getOrder()
+            ).ifPresent(routeDefinition::setOrder);
 
             Optional<Map<String, Object>> metaData = MapMerge.deepMerge(
                     Optional.of(properties.getDefaultRouteSettings().getMetadata()),
