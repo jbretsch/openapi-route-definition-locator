@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/jbretsch/openapi-route-definition-locator?color=brightgreen)](https://github.com/jbretsch/openapi-route-definition-locator/blob/master/LICENSE)
 
 The OpenAPI Route Definition Locator is a
-[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#configuration)
+[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#configuration)
 for [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway) which creates route definitions
 dynamically based on OpenAPI (aka Swagger) definitions served by backend (micro)services.
 
@@ -175,10 +175,10 @@ openapi-route-definition-locator:
 #### Additional RouteDefinition attributes
 
 Spring Cloud Gateway route definitions can have more attributes. You may want to use
-- additional [predicates](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#gateway-request-predicates-factories),
-- additional [filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#gatewayfilter-factories),
-- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#retrieving-the-routes-defined-in-the-gateway), or
-- [metadata](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#route-metadata-configuration)
+- additional [predicates](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#gateway-request-predicates-factories),
+- additional [filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#gatewayfilter-factories),
+- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#retrieving-the-routes-defined-in-the-gateway), or
+- [metadata](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#route-metadata-configuration)
 
 with the routes created from your OpenAPI definitions.
 
@@ -186,10 +186,10 @@ First of all, the Spring Cloud Gateway default filters apply. See the section
 [Default Filters](#default-filters).
 
 Additionally, you can define
-[predicates](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#gateway-request-predicates-factories),
-[filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#gatewayfilter-factories),
-[ordering](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#retrieving-the-routes-defined-in-the-gateway),
-and [metadata](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#route-metadata-configuration)
+[predicates](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#gateway-request-predicates-factories),
+[filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#gatewayfilter-factories),
+[ordering](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#retrieving-the-routes-defined-in-the-gateway),
+and [metadata](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#route-metadata-configuration)
 at several places:
 - In your `application.yml` globally for all services. See the section
   [Additional RouteDefinition attributes in configuration file](#additional-routedefinition-attributes-in-configuration-file).
@@ -215,7 +215,7 @@ location is applied.
 ##### Default Filters
 
 As the OpenAPI Route Definition Locator is just another `RouteDefinitionLocator`, all
-[Default Filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.2/reference/html/#default-filters)
+[Default Filters](https://docs.spring.io/spring-cloud-gateway/docs/3.1.8/reference/html/#default-filters)
 you have defined in your `application.yml` also apply to the `RouteDefinitions` created by the
 OpenAPI Route Definition Locator.
 
