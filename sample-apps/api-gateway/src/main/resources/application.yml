@@ -35,9 +35,15 @@ openapi-route-definition-locator:
   #enabled: false
   #metrics:
   #  enabled: false
+  default-route-settings:
+    filters:
+      - AddResponseHeader=X-Response-DefaultForAllServices, sample-value-all
   services:
     - id: service1
       uri: http://localhost:8081
+      default-route-settings:
+        filters:
+          - AddResponseHeader=X-Response-DefaultForOneService, sample-value-one
     - id: service2
       uri: http://localhost:8082
       openapi-definition-uri: /custom-path-to/openapi-definition

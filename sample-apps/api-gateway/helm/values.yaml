@@ -11,9 +11,15 @@ appConfig:
   server:
     port: 8080
   openapi-route-definition-locator:
+    default-route-settings:
+      filters:
+        - AddResponseHeader=X-Response-DefaultForAllServices, sample-value-all
     services:
       - id: service-users
         uri: http://service-users:8080
+        default-route-settings:
+          filters:
+            - AddResponseHeader=X-Response-DefaultForOneService, sample-value-one
       - id: service-orders
         uri: http://service-orders:8080
         openapi-definition-uri: /custom-path-to/openapi-definition
