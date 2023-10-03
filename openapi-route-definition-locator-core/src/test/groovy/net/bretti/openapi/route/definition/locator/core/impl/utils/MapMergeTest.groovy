@@ -63,17 +63,19 @@ class MapMergeTest extends Specification {
     // modified via a `OpenApiRouteDefinitionCustomizer` implementation and there should be no interference whatsoever
     // between the metadata maps of different API operations.
     def "deepMerge(original, patch) returns a deep copy"() {
-        when:
+        when: 'we merge an original map and a patch map'
         Map<String, Object> originalPatched = MapMerge.deepMerge(Optional.ofNullable(original), Optional.ofNullable(patch)).get()
 
-        then:
+        then: 'we get some expected result'
         originalPatched == originalPatchedExpected
 
-        when:
+        when: 'we modify that result, e.g. via a `OpenApiRouteDefinitionCustomizer` implementation'
         originalPatchModifier.call(originalPatched)
+
+        and: 'merge the original map and patch map again'
         Map<String, Object> originalPatched2 = MapMerge.deepMerge(Optional.ofNullable(original), Optional.ofNullable(patch)).get()
 
-        then:
+        then: 'the patch result should be the same as the result of the first merge operation'
         originalPatched2 == originalPatchedExpected
 
         where:
@@ -88,17 +90,19 @@ class MapMergeTest extends Specification {
     }
 
     def "deepMerge(original) returns a deep copy"() {
-        when:
+        when: 'we merge an original map with an empty list of patch maps'
         Map<String, Object> originalPatched = MapMerge.deepMerge(Optional.ofNullable(original)).get()
 
-        then:
+        then: 'we get some expected result'
         originalPatched == originalPatchedExpected
 
-        when:
+        when: 'we modify that result, e.g. via a `OpenApiRouteDefinitionCustomizer` implementation'
         originalPatchModifier.call(originalPatched)
+
+        and: 'merge the original map with an empty list of patch maps again'
         Map<String, Object> originalPatched2 = MapMerge.deepMerge(Optional.ofNullable(original)).get()
 
-        then:
+        then: 'the patch result should be the same as the result of the first merge operation'
         originalPatched2 == originalPatchedExpected
 
         where:
