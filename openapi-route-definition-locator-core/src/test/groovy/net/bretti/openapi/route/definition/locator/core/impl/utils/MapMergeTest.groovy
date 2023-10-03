@@ -54,4 +54,54 @@ class MapMergeTest extends Specification {
         [a: 'b'] | [b: 'c']  | [c: 'd'] | [a: 'b', b: 'c', c: 'd']
         [a: 'b'] | [a: null] | [b: 'c'] | [b: 'c']
     }
+
+    // It is important that deepMerge() returns a deep copy of the input maps because metadata maps can be arbitrarily
+    // modified via a `OpenApiRouteDefinitionCustomizer` implementation and there should be no interference whatsoever
+    // between the metadata maps of different API operations.
+    def "deepMerge(original, patch) returns a deep copy"() {
+        when:
+        Map<String, Object> originalPatched = MapMerge.deepMerge(Optional.ofNullable(original), Optional.ofNullable(patch)).get()
+
+        then:
+        originalPatched == originalPatchedExpected
+
+        when:
+        originalPatchModifier.call(originalPatched)
+        Map<String, Object> originalPatched2 = MapMerge.deepMerge(Optional.ofNullable(original), Optional.ofNullable(patch)).get()
+
+        then:
+        originalPatched2 == originalPatchedExpected
+
+        where:
+        original                       | patch                          | originalPatchedExpected                              | originalPatchModifier
+        [:]                            | [key1: [key11: 'value11']]     | [key1: [key11: 'value11']]                           | { it.key1.key12 = 'value12' }
+        [:]                            | [key1: ['value11']]            | [key1: ['value11']]                                  | { it.key1.add('value12') }
+        [key1: [key11: 'value11']]     | null                           | [key1: [key11: 'value11']]                           | { it.key1.key12 = 'value12' }
+        null                           | [key1: [key11: 'value11']]     | [key1: [key11: 'value11']]                           | { it.key1.key12 = 'value12' }
+        [key1: [key11: 'value11']]     | [:]                            | [key1: [key11: 'value11']]                           | { it.key1.key12 = 'value12' }
+        [key1: [[key101: 'value101']]] | [key1: [[key111: 'value111']]] | [key1: [[key101: 'value101'], [key111: 'value111']]] | { it.key1[0].key102 = 'value102' }
+        [key1: [[key101: 'value101']]] | [key1: [[key111: 'value111']]] | [key1: [[key101: 'value101'], [key111: 'value111']]] | { it.key1[1].key112 = 'value112' }
+    }
+
+    def "deepMerge(original) returns a deep copy"() {
+        when:
+        Map<String, Object> originalPatched = MapMerge.deepMerge(Optional.ofNullable(original)).get()
+
+        then:
+        originalPatched == originalPatchedExpected
+
+        when:
+        originalPatchModifier.call(originalPatched)
+        Map<String, Object> originalPatched2 = MapMerge.deepMerge(Optional.ofNullable(original)).get()
+
+        then:
+        originalPatched2 == originalPatchedExpected
+
+        where:
+        original                   | originalPatchedExpected    | originalPatchModifier
+        [:]                        | [:]                        | { it.key1 = 'value1' }
+        [:]                        | [:]                        | { it.key1 = ['value1'] }
+        [key1: [key11: 'value11']] | [key1: [key11: 'value11']] | { it.key1.key12 = 'value12' }
+        [key1: ['value11']]        | [key1: ['value11']]        | { it.key1.add('value12') }
+    }
 }

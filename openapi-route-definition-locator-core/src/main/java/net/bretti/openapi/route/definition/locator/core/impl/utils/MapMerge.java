@@ -87,6 +87,11 @@ public class MapMerge {
                 continue;
             }
 
+            if (patchValue instanceof List) {
+                result.put(key, deepCopy((List<Object>)patchValue, false));
+                continue;
+            }
+
             result.put(key, patchValue);
         }
         return result;
