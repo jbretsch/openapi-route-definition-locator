@@ -40,6 +40,14 @@ tasks:
       - undeploy-service-users
       - undeploy-api-gateway
 
+  clean:
+    desc: Undeploys all sample services and cleans up Kubernetes (e.g. delete installed CRDs)
+    ignore_error: true
+    deps:
+      - undeploy
+      - clean-prometheus
+      - clean-nginx-controller
+
   deploy-nginx-controller:
     cmds:
       - helm repo add nginx-stable https://helm.nginx.com/stable
@@ -57,6 +65,23 @@ tasks:
     cmds:
       - helm delete nginx-controller
 
+  clean-nginx-controller:
+    ignore_error: true
+    deps:
+      - undeploy-nginx-controller
+    cmds:
+      - kubectl delete crd apdoslogconfs.appprotectdos.f5.com
+      - kubectl delete crd apdospolicies.appprotectdos.f5.com
+      - kubectl delete crd aplogconfs.appprotect.f5.com
+      - kubectl delete crd appolicies.appprotect.f5.com
+      - kubectl delete crd apusersigs.appprotect.f5.com
+      - kubectl delete crd dnsendpoints.externaldns.nginx.org
+      - kubectl delete crd dosprotectedresources.appprotectdos.f5.com
+      - kubectl delete crd globalconfigurations.k8s.nginx.org
+      - kubectl delete crd policies.k8s.nginx.org
+      - kubectl delete crd transportservers.k8s.nginx.org
+      - kubectl delete crd virtualserverroutes.k8s.nginx.org
+      - kubectl delete crd virtualservers.k8s.nginx.org
   deploy-api-gateway:
     dir: api-gateway/helm
     cmds:
@@ -107,11 +132,11 @@ tasks:
       - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - helm repo update
       - |
-        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --version 30.0.0 \
-            --set prometheus-node-exporter.hostRootFsMount=false \
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --version 51.2.0 \
+            --set prometheus-node-exporter.hostRootFsMount.enabled=false \
             --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
             --set grafana.ingress.enabled=true \
-            --set 'grafana.ingress.annotations."kubernetes\.io/ingress\.class"=nginx' \
+            --set grafana.ingress.ingressClassName=nginx \
             --set 'grafana.ingress.hosts={"grafana.127.0.0.1.nip.io"}' \
             --set grafana.adminPassword=admin \
             --set grafana.sidecar.dashboards.enabled=true
@@ -120,3 +145,19 @@ tasks:
     ignore_error: true
     cmds:
       - helm delete prometheus
+
+  clean-prometheus:
+    ignore_error: true
+    deps:
+      - undeploy-prometheus
+    cmds:
+      - kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
+      - kubectl delete crd alertmanagers.monitoring.coreos.com
+      - kubectl delete crd podmonitors.monitoring.coreos.com
+      - kubectl delete crd probes.monitoring.coreos.com
+      - kubectl delete crd prometheusagents.monitoring.coreos.com
+      - kubectl delete crd prometheuses.monitoring.coreos.com
+      - kubectl delete crd prometheusrules.monitoring.coreos.com
+      - kubectl delete crd scrapeconfigs.monitoring.coreos.com
+      - kubectl delete crd servicemonitors.monitoring.coreos.com
+      - kubectl delete crd thanosrulers.monitoring.coreos.com
