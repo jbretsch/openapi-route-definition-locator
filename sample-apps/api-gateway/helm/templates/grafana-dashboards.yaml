@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: "{{ .Release.Name }}-grafana-dashboards"
   labels:
-    grafana_dashboard: "true"
+    grafana_dashboard: '1'
 data:
   spring-boot-dashboard.json: |-
 {{ .Files.Get "files/dashboards/spring-boot-dashboard.json" | indent 4 }}
