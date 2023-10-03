@@ -22,6 +22,7 @@ import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefin
 import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer
 import org.apache.commons.lang3.ObjectUtils
 import org.springframework.cloud.gateway.filter.FilterDefinition
+import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition
 import org.springframework.cloud.gateway.route.RouteDefinition
 import org.springframework.stereotype.Component
 
@@ -39,6 +40,10 @@ class XAuthTypeRouteDefinitionCustomizer implements OpenApiRouteDefinitionCustom
             return
         }
 
+        // We add a filter, a predicate, and some metadata here to make sure that the respective lists and maps are
+        // mutable.
         routeDefinition.getFilters().add(new FilterDefinition("AddResponseHeader=X-Auth-Type-Was, ${xAuthType}"))
+        routeDefinition.getPredicates().add(new PredicateDefinition("Header=Authorization"))
+        routeDefinition.getMetadata().put("AddedByXAuthTypeRouteDefinitionCustomizer", xAuthType)
     }
 }

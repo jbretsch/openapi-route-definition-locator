@@ -59,7 +59,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
         then:
         Map getUsersRoute = extractRoute(routes, "GET", "/users")
-        getUsersRoute.predicate == "(Methods: [GET] && Paths: [/users], match trailing slash: true)"
+        getUsersRoute.predicate == "((Methods: [GET] && Paths: [/users], match trailing slash: true) && Header: Authorization regexp=null)"
         getUsersRoute.route_id != null
         getUsersRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
@@ -69,15 +69,20 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         ]
         getUsersRoute.uri == "http://localhost:9091"
         getUsersRoute.order == 6
-        getUsersRoute.metadata == [defaultForAllServices: 'OptionValueAll', defaultForOneService: 'OptionValueOne']
+        getUsersRoute.metadata == [
+                defaultForAllServices                    : 'OptionValueAll',
+                defaultForOneService                     : 'OptionValueOne',
+                AddedByXAuthTypeRouteDefinitionCustomizer: 'Application',
+        ]
         getUsersRoute.size() == 6
 
         and:
         Map getUserRoute = extractRoute(routes, "GET", "/users/{userId}")
         getUserRoute.predicate ==
-                "(((Methods: [GET] && Paths: [/users/{userId}], match trailing slash: true) && " +
+                "((((Methods: [GET] && Paths: [/users/{userId}], match trailing slash: true) && " +
                 "After: 2022-01-20T17:42:47.789+01:00[Europe/Berlin]) && " +
-                "Header: Required-Test-Header regexp=required-test-header-.*)"
+                "Header: Required-Test-Header regexp=required-test-header-.*) && " +
+                "Header: Authorization regexp=null)"
         getUserRoute.route_id != null
         getUserRoute.filters == [
                 "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
@@ -87,7 +92,11 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         ]
         getUserRoute.uri == "http://localhost:9091"
         getUserRoute.order == 6
-        getUserRoute.metadata == [defaultForAllServices: 'OptionValueAll', defaultForOneService: 'OptionValueOne']
+        getUserRoute.metadata == [
+                defaultForAllServices                    : 'OptionValueAll',
+                defaultForOneService                     : 'OptionValueOne',
+                AddedByXAuthTypeRouteDefinitionCustomizer: 'Application User',
+        ]
         getUserRoute.size() == 6
 
         and:
@@ -185,8 +194,25 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         getOpenApiInClassPathEntitiesRoute.size() == 6
 
         when:
+        FluxExchangeResult<String> getUsersWithoutHeaderResponse = webTestClient
+                .get().uri("http://localhost:${localServerPort}/users")
+                .exchange().returnResult(String)
+
+        then:
+        getUsersWithoutHeaderResponse.getRawStatusCode() == 404
+        String getUsersWithoutHeaderResponseBody = getUsersWithoutHeaderResponse.getResponseBody().blockFirst()
+        Map getUsersWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUsersWithoutHeaderResponseBody) as Map
+        getUsersWithoutHeaderResponseBodyJson.timestamp != null
+        getUsersWithoutHeaderResponseBodyJson.path == "/users"
+        getUsersWithoutHeaderResponseBodyJson.status == 404
+        getUsersWithoutHeaderResponseBodyJson.error == "Not Found"
+        getUsersWithoutHeaderResponseBodyJson.message == null
+        getUsersWithoutHeaderResponseBodyJson.requestId != null
+
+        when:
         FluxExchangeResult<String> getUsersResponse = webTestClient
                 .get().uri("http://localhost:${localServerPort}/users")
+                .header("Authorization", "Bearer someToken")
                 .exchange().returnResult(String)
 
         then:
@@ -213,6 +239,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         when:
         FluxExchangeResult<String> getUserResponse = webTestClient
                 .get().uri("http://localhost:${localServerPort}/users/${USER_ID}")
+                .header("Authorization", "Bearer someToken")
                 .header("Required-Test-Header", "required-test-header-value")
                 .exchange().returnResult(String)
 
