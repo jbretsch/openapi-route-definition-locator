@@ -23,19 +23,25 @@ cd sample-apps
 task build deploy
 ```
 
+See the [troubleshooting](#troubleshooting) tips if the Helm deployments fail.
+
 After the deployment succeeded you will see output like this:
 ```
-API gateway base URL: http://api.127.0.0.1.nip.io
+API Gateway:
+  Base URL: http://api.127.0.0.1.nip.io
 
-Try:
+  Try:
     curl -v http://api.127.0.0.1.nip.io/users | jq .
     curl -v http://api.127.0.0.1.nip.io/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868 | jq .
     curl -v http://api.127.0.0.1.nip.io/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868/orders | jq .
     curl -v http://api.127.0.0.1.nip.io/users/6ac8d69c-7a8c-4ce3-854a-2a51f8bbd868/orders/271acbc1-50b0-45ae-ad04-a231f1057714 | jq .
     curl -v http://api.127.0.0.1.nip.io/actuator/gateway/routes | jq .
 
-Grafana: http://grafana.127.0.0.1.nip.io/
-Grafana login credentials: admin // admin
+Grafana:
+  URL              : http://grafana.127.0.0.1.nip.io/
+  Login credentials: admin // admin
+  Gateway Dashboard: http://grafana.127.0.0.1.nip.io/d/c09a9f35
+  Service Dashboard: http://grafana.127.0.0.1.nip.io/d/179dd90b
 ```
 
 ## API Requests via API Gateway
@@ -56,5 +62,11 @@ the credentials `admin` / `admin`.
 There is a [Spring Boot Dashboard](http://grafana.127.0.0.1.nip.io/d/179dd90b) and
 a [Spring Cloud Gateway Dashboard](http://grafana.127.0.0.1.nip.io/d/c09a9f35).
 
+## Troubleshooting
+
+The Helm deployment of
+[kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+may fail if you have incompatible versions of the CRDs created by this chart installed in your
+Kubernetes cluster. Run `task clean` to have them deleted. Then run `task deploy` again.
 
 
