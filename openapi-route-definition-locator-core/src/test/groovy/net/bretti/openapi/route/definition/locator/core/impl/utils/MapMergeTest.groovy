@@ -23,7 +23,7 @@ import spock.lang.Specification
 class MapMergeTest extends Specification {
     def "deepMerge merges two maps correctly"() {
         expect:
-        MapMerge.deepMerge(Optional.of(original), Optional.of(patch)) == Optional.of(expectedResult)
+        MapMerge.deepMerge(Optional.ofNullable(original), Optional.ofNullable(patch)) == Optional.ofNullable(expectedResult)
 
         where:
         original         | patch                  | expectedResult
@@ -40,6 +40,10 @@ class MapMergeTest extends Specification {
         [a: [a: 'foo']]  | [a: null]              | [:]
         [a: [a: 'foo']]  | [a: 'bar']             | [a: 'bar']
         [e: null]        | [a: 1]                 | [e: null, a: 1]
+        [e: null]        | null                   | [e: null]
+        [a: [[e: null]]] | [a: [[f: null]]]       | [a: [[e: null], [:]]]
+        [:]              | [a: [[f: null]]]       | [a: [[:]]]
+        null             | [e: null]              | [:]
         [a: [1, 2]]      | [a: [a: 'b', c: null]] | [a: [a: 'b']]
         [:]              | [a: [bb: [ccc: null]]] | [a: [bb: [:]]]
     }
@@ -100,6 +104,7 @@ class MapMergeTest extends Specification {
         where:
         original                   | originalPatchedExpected    | originalPatchModifier
         [:]                        | [:]                        | { it.key1 = 'value1' }
+        [e: null]                  | [e: null]                  | { it.key1 = 'value1' }
         [:]                        | [:]                        | { it.key1 = ['value1'] }
         [key1: [key11: 'value11']] | [key1: [key11: 'value11']] | { it.key1.key12 = 'value12' }
         [key1: ['value11']]        | [key1: ['value11']]        | { it.key1.add('value12') }
