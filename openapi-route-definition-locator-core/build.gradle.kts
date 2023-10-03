@@ -73,7 +73,7 @@ signing {
 // Inspired by <https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/257#issuecomment-895790557>.
 tasks.withType<GenerateMavenPom>().all {
     doLast {
-        val file = File("$buildDir/publications/mavenJava/pom-default.xml")
+        val file = layout.buildDirectory.file("publications/mavenJava/pom-default.xml").get().asFile
         var text = file.readText()
         val regex = "(?s)(<dependencyManagement>.+?<dependencies>)(.+?)(</dependencies>.+?</dependencyManagement>)".toRegex()
         val matcher = regex.find(text)
