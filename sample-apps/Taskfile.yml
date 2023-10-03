@@ -52,13 +52,13 @@ tasks:
     cmds:
       - helm repo add nginx-stable https://helm.nginx.com/stable
       - helm repo update
-      - helm upgrade --install nginx-controller nginx-stable/nginx-ingress
+      - helm upgrade --install nginx-controller nginx-stable/nginx-ingress --version 1.0.0
 
   deploy-debug-nginx-controller:
     cmds:
       - helm repo add nginx-stable https://helm.nginx.com/stable
       - helm repo update
-      - helm upgrade --dry-run --debug --install nginx-controller nginx-stable/nginx-ingress --version 0.13.0
+      - helm upgrade --dry-run --debug --install nginx-controller nginx-stable/nginx-ingress --version 1.0.0
 
   undeploy-nginx-controller:
     ignore_error: true
