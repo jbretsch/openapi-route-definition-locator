@@ -53,7 +53,7 @@ Maven
       <dependency>
          <groupId>net.bretti.openapi-route-definition-locator</groupId>
          <artifactId>openapi-route-definition-locator-bom</artifactId>
-         <version>0.6.5-sc-2022.0</version>
+         <version>0.6.6-sc-2022.0</version>
          <type>pom</type>
          <scope>import</scope>
       </dependency>
@@ -67,7 +67,7 @@ Maven
 
 Gradle Kotlin DSL
 ```kotlin
-implementation(platform("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-bom:0.6.5-sc-2022.0"))
+implementation(platform("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-bom:0.6.6-sc-2022.0"))
 implementation("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-spring-cloud-starter")
 ```
 
@@ -418,7 +418,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.4/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -437,7 +437,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.4/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -455,7 +455,7 @@ If this property is not set or set to `true`, the OpenAPI Route Definition Locat
 The OpenAPI Route Definition Locator provides metrics via [Micrometer](https://micrometer.io/).
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.4/reference/html/actuator.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/actuator.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```

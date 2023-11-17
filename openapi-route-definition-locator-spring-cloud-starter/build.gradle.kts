@@ -18,7 +18,7 @@ dependencies {
     testImplementation("org.springframework.cloud:spring-cloud-starter-gateway")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     testRuntimeOnly("io.micrometer:micrometer-registry-prometheus")
-    testImplementation("org.wiremock:wiremock:3.2.0")
+    testImplementation("org.wiremock:wiremock:3.3.1")
     testImplementation("org.apache.commons:commons-lang3")
 }
 
