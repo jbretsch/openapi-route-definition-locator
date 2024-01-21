@@ -133,7 +133,7 @@ service serves its OpenAPI definition from a different path, you can configure t
 Definition Locator accordingly. In fact, the OpenAPI definition can be
 retrieved from any HTTP(S) URL or from local locations referenced via the URL schemas `file:` or
 `classpath:` that are supported by Spring's
-[ResourceLoader](https://docs.spring.io/spring-framework/docs/5.3.24/reference/html/core.html#resources-resourceloader).
+[ResourceLoader](https://docs.spring.io/spring-framework/docs/5.3.31/reference/html/core.html#resources-resourceloader).
 The OpenAPI definition URI can be set globally or per service. Of course, you can set it also
 globally _and_ per service. The latter overrides the former.
 
