@@ -37,6 +37,7 @@ API resources automatically configured during runtime. This works roughly as fol
 
 | Version         | Spring Cloud | Spring Boot  | Minimum Java Version |
 |-----------------|--------------|--------------|----------------------|
+| x.y.z-sc-2023.0 | 2023.0.x     | 3.2.x        | 17                   |
 | x.y.z-sc-2022.0 | 2022.0.x     | 3.0.x, 3.1.x | 17                   |
 | x.y.z-sc-2021.0 | 2021.0.x     | 2.6.x, 2.7.x | 8                    |
 
@@ -418,7 +419,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.8/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -437,7 +438,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.8/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -455,7 +456,7 @@ If this property is not set or set to `true`, the OpenAPI Route Definition Locat
 The OpenAPI Route Definition Locator provides metrics via [Micrometer](https://micrometer.io/).
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/actuator.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.8/reference/html/actuator.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```
