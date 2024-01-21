@@ -199,7 +199,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUsersWithoutHeaderResponse.getRawStatusCode() == 404
+        getUsersWithoutHeaderResponse.status.value() == 404
         String getUsersWithoutHeaderResponseBody = getUsersWithoutHeaderResponse.getResponseBody().blockFirst()
         Map getUsersWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUsersWithoutHeaderResponseBody) as Map
         getUsersWithoutHeaderResponseBodyJson.timestamp != null
@@ -216,7 +216,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUsersResponse.getRawStatusCode() == 200
+        getUsersResponse.status.value() == 200
         getUsersResponse.getResponseBody().blockFirst() == '[{"id": "user-id-1"}]'
 
 
@@ -226,7 +226,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUserWithoutHeaderResponse.getRawStatusCode() == 404
+        getUserWithoutHeaderResponse.status.value() == 404
         String getUserWithoutHeaderResponseBody = getUserWithoutHeaderResponse.getResponseBody().blockFirst()
         Map getUserWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUserWithoutHeaderResponseBody) as Map
         getUserWithoutHeaderResponseBodyJson.timestamp != null
@@ -244,7 +244,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUserResponse.getRawStatusCode() == 200
+        getUserResponse.status.value() == 200
         getUserResponse.getResponseBody().blockFirst() == '{"id": "user-id-1"}'
 
         when:
@@ -253,7 +253,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getOrdersResponse.getRawStatusCode() == 418
+        getOrdersResponse.status.value() == 418
         getOrdersResponse.getResponseBody().blockFirst() == '[{"id": "order-id-1"}]'
 
         when:
@@ -262,7 +262,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getOrderResponse.getRawStatusCode() == 418
+        getOrderResponse.status.value() == 418
         getOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
 
         when:
@@ -271,7 +271,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        postOrderResponse.getRawStatusCode() == 201
+        postOrderResponse.status.value() == 201
         postOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
 
         when:
@@ -280,7 +280,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getContextInBaseUriThingsResponse.getRawStatusCode() == 200
+        getContextInBaseUriThingsResponse.status.value() == 200
         getContextInBaseUriThingsResponse.getResponseBody().blockFirst() == '[{"id": "thing-id-1"}]'
     }
 
