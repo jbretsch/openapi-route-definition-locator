@@ -41,7 +41,7 @@ dependencies {
 
 java {
     group = "net.bretti.openapi-route-definition-locator"
-    version = "0.6.7-sc-2021.0"
+    version = "0.6.8-sc-2021.0-SNAPSHOT"
     toolchain {
         // Keep the same Java compatibility as Spring Cloud Gateway.
         languageVersion.set(JavaLanguageVersion.of(8))
