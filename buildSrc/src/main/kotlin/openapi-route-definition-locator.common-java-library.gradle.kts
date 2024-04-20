@@ -30,13 +30,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     testImplementation("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    testImplementation(platform("org.spockframework:spock-bom:${spockVersion}"))
-    testImplementation("org.spockframework:spock-spring")
-
-    testImplementation("org.codehaus.groovy:groovy-json")
 }
 
 java {
@@ -50,6 +43,17 @@ java {
     withSourcesJar()
 }
 
-tasks.test {
-    useJUnitPlatform()
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+
+            dependencies {
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation(platform("org.spockframework:spock-bom:${spockVersion}"))
+                implementation("org.spockframework:spock-spring")
+                implementation("org.codehaus.groovy:groovy-json")
+            }
+        }
+    }
 }
