@@ -2,17 +2,11 @@ plugins {
     id("openapi-route-definition-locator.common-java-library")
 }
 
-java {
-    registerFeature("metrics") {
-        usingSourceSet(sourceSets["main"])
-    }
-}
-
 dependencies {
-    "metricsApi"("io.micrometer:micrometer-core")
+    compileOnly("io.micrometer:micrometer-core")
     implementation("org.springframework.cloud:spring-cloud-gateway-server")
     implementation("org.springframework:spring-webflux")
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.20")
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.22")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
