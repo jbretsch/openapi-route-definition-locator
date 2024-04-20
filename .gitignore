@@ -4,3 +4,5 @@ build/
 out/
 classes/
 gradle.properties
+*.jfr
+.DS_Store
