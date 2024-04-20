@@ -19,8 +19,8 @@ the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().a
     }
 }
 
-val springCloudDependenciesVersion = "2022.0.4"
-val lombokVersion = "1.18.30"
+val springCloudDependenciesVersion = "2022.0.5"
+val lombokVersion = "1.18.32"
 val spockVersion = "2.4-M1-groovy-4.0"
 
 dependencies {
@@ -30,13 +30,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     testImplementation("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    testImplementation(platform("org.spockframework:spock-bom:${spockVersion}"))
-    testImplementation("org.spockframework:spock-spring")
-
-    testImplementation("org.apache.groovy:groovy-json")
 }
 
 java {
@@ -50,6 +43,17 @@ java {
     withSourcesJar()
 }
 
-tasks.test {
-    useJUnitPlatform()
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+
+            dependencies {
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation(platform("org.spockframework:spock-bom:${spockVersion}"))
+                implementation("org.spockframework:spock-spring")
+                implementation("org.apache.groovy:groovy-json")
+            }
+        }
+    }
 }
