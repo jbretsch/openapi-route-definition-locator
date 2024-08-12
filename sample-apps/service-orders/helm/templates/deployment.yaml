@@ -35,7 +35,7 @@ spec:
               value: "1"
           resources:
             limits:
-              memory: 192Mi
+              memory: 320Mi
           startupProbe:
             httpGet:
               path: /actuator/health/readiness
