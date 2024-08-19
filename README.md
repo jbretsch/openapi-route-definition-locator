@@ -17,8 +17,9 @@ routes can be challenging, but the OpenAPI Route Definition Locator simplifies t
 ### Common Challenges
 
 Traditionally, you might resort to:
-- Manually creating route definitions for each public API endpoint in a static configuration file for Spring Cloud Gateway.
-- Using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/docs/3.1.9/reference/html/#the-discoveryclient-route-definition-locator)
+- manually creating route definitions for each public API endpoint in a static configuration file for Spring Cloud
+  Gateway or
+- using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/docs/3.1.9/reference/html/#the-discoveryclient-route-definition-locator)
   Route Definition Locator to automatically generate a catch-all route for each microservice.
 
 However, both approaches have significant drawbacks:
@@ -135,8 +136,12 @@ spring:
          # More routes for http://service-orders:8080. 
 ```
 
-You can find a fully working example at [sample-apps](sample-apps). See the
-[sample-apps/README.md](sample-apps/README.md).
+### Sample applications
+
+A fully functional example is available in the [sample-apps](sample-apps) directory. This example demonstrates an API
+gateway integrated with two backend microservices, all deployed using Helm in a Kubernetes cluster. The setup includes
+metrics collection via Prometheus, with example dashboards provided in Grafana for visualization. For detailed
+instructions and additional information, refer to the [sample-apps/README.md](sample-apps/README.md).
 
 ### Advanced Configuration
 
