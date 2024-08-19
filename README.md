@@ -5,31 +5,46 @@
 
 The OpenAPI Route Definition Locator is a
 [RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/docs/3.1.9/reference/html/#configuration)
-for [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway) which creates route definitions
-dynamically based on OpenAPI (aka Swagger) definitions served by backend (micro)services.
+for [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway). It dynamically creates route definitions
+based on OpenAPI (aka Swagger) definitions served by backend (micro)services.
 
-## Why use it?
+## Key Benefits
 
-Let's say you run a number of microservices in a Kubernetes cluster. The microservices provide REST APIs.
-Some of those REST API resources should be publicly available via a Spring Cloud Gateway service, some
-should only be accessible internally by your microservices. What do you do?
+Let's assume you have a Kubernetes environment, where multiple microservices expose REST APIs, and some API endpoints
+need to be publicly accessible through a Spring Cloud Gateway, while others should remain internal. Managing these
+routes can be challenging, but the OpenAPI Route Definition Locator simplifies this process.
 
-You could manually create a route definition for each public API resource in a static configuration file for
-your Spring Cloud Gateway service. But maintaining these route definition gets tedious if you have many
-microservices. Even more so if those microservices are maintained by many teams. For instance, API Gateway
-releases (or at least configuration changes) must be synchronized with releases of other microservices.
-That's no pleasure in a large organization.
+### Common Challenges
 
-Or you can use the OpenAPI Route Definition Locator in your API Gateway to have all routes for your public
-API resources automatically configured during runtime. This works roughly as follows:
+Traditionally, you might resort to:
+- Manually creating route definitions for each public API endpoint in a static configuration file for Spring Cloud Gateway.
+- Using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/docs/3.1.9/reference/html/#the-discoveryclient-route-definition-locator)
+  Route Definition Locator to automatically generate a catch-all route for each microservice.
 
-1. Have your microservices provide an OpenAPI definition for all their public API resources via a
-   (non-public) HTTP endpoint.
-2. Add the OpenAPI Route Definition Locator Spring Boot starter module to your API Gateway.
-3. Configure in the Spring properties of your API Gateway a list of microservices which the
-   OpenAPI Route Definition Locator should monitor.
-4. The OpenAPI Route Definition Locator regularly retrieves the OpenAPI definitions of your microservices
-   and configures a route for each of the operations in those OpenAPI definitions.
+However, both approaches have significant drawbacks:
+- Static route management becomes increasingly cumbersome as the number of microservices grows, especially when
+  multiple teams are involved. Synchronizing API Gateway configurations with microservice releases in a large
+  organization can be time-consuming and error-prone.
+- DiscoveryClient’s automatic route generation per default exposes internal service identifiers in public URLs and
+  results in tightly coupling public URLs with the internal service organization, reducing flexibility and
+  making future changes more difficult.
+
+### How OpenAPI Route Definition Locator Helps
+
+The OpenAPI Route Definition Locator addresses these issues by automating the discovery and configuration of public API
+routes based on OpenAPI definitions. Here’s how it works:
+
+1. **Expose OpenAPI Definitions:** Ensure each microservice provides an OpenAPI definition for its public API endpoints
+   via a non-public HTTP endpoint.
+2. **Integrate the Starter Module:** Add the OpenAPI Route Definition Locator Spring Boot starter module to your Spring
+   Cloud Gateway project.
+3. **Configure Service List:** Specify a list of microservices in your API Gateway’s Spring properties that the OpenAPI
+   Route Definition Locator should monitor.
+4. **Automatic Route Configuration:** The OpenAPI Route Definition Locator regularly fetches the OpenAPI definitions
+   from the configured microservices and automatically generates routes for the specified operations.
+
+This approach allows you to decouple internal microservice organization from public API routing, providing greater
+flexibility and simplifying route management.
 
 ![Overview](docs/images/overview.png)
 
