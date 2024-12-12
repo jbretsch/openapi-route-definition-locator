@@ -97,7 +97,7 @@ public class OpenApiRouteDefinitionLocatorProperties {
          * The URI of the OpenAPI definition to be retrieved from the service.
          * This generally is a relative URI; relative to the service's base URI.
          * But it can also be an absolute URI. As the OpenAPI definition is loaded
-         * via Spring's <a href="https://docs.spring.io/spring-framework/reference/core/resources.html#resources-resourceloader">
+         * via Spring's <a href="https://docs.spring.io/spring-framework/reference/6.1/core/resources.html#resources-resourceloader">
          * ResourceLoader</a>, you can use schemas such as {@code http:}, {@code https:}, {@code file:} or
          * {@code classpath:}. The default is the value of the property
          * {@code openapi-route-definition-locator.openapi-definition-uri}.
