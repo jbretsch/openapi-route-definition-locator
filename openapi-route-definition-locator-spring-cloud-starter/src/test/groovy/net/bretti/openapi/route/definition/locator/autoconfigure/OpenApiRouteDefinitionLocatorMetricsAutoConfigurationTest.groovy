@@ -39,7 +39,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
     def "OpenAPI Route Definition Locator metrics are active if GatewayMetricsAutoConfiguration is present"() {
         expect:
         contextRunner
-                .withInitializer(new ConditionEvaluationReportLoggingListener(LogLevel.INFO))
+                .withInitializer(ConditionEvaluationReportLoggingListener.forLogLevel(LogLevel.INFO))
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorMetricsAutoConfiguration,
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
@@ -58,7 +58,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
     def "OpenAPI Route Definition Locator metrics are inactive if they are explicitly disabled"() {
         expect:
         contextRunner
-                .withInitializer(new ConditionEvaluationReportLoggingListener(LogLevel.INFO))
+                .withInitializer(ConditionEvaluationReportLoggingListener.forLogLevel(LogLevel.INFO))
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorMetricsAutoConfiguration,
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
@@ -78,7 +78,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
     def "OpenAPI Route Definition Locator metrics are inactive if the OpenAPI Route Definition Locator is explicitly disabled"() {
         expect:
         contextRunner
-                .withInitializer(new ConditionEvaluationReportLoggingListener(LogLevel.INFO))
+                .withInitializer(ConditionEvaluationReportLoggingListener.forLogLevel(LogLevel.INFO))
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorMetricsAutoConfiguration,
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
@@ -98,7 +98,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
     def "OpenAPI Route Definition Locator metrics are inactive if Spring Cloud metrics are explicitly disabled"() {
         expect:
         contextRunner
-                .withInitializer(new ConditionEvaluationReportLoggingListener(LogLevel.INFO))
+                .withInitializer(ConditionEvaluationReportLoggingListener.forLogLevel(LogLevel.INFO))
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorMetricsAutoConfiguration,
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
@@ -118,7 +118,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
     def "OpenAPI Route Definition Locator metrics are inactive if metrics are globally absent"() {
         expect:
         contextRunner
-                .withInitializer(new ConditionEvaluationReportLoggingListener(LogLevel.INFO))
+                .withInitializer(ConditionEvaluationReportLoggingListener.forLogLevel(LogLevel.INFO))
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorMetricsAutoConfiguration,
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
