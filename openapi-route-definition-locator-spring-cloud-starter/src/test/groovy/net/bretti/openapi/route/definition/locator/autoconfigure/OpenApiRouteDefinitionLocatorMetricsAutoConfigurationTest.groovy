@@ -26,6 +26,7 @@ import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegi
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
+import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
 import org.springframework.boot.logging.LogLevel
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
@@ -46,6 +47,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         GatewayAutoConfiguration,
                         GatewayMetricsAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration,
                         MetricsAutoConfiguration,
                         CompositeMeterRegistryAutoConfiguration,
                 ))
@@ -65,6 +67,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         GatewayAutoConfiguration,
                         GatewayMetricsAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration,
                         MetricsAutoConfiguration,
                         CompositeMeterRegistryAutoConfiguration,
                 ))
@@ -85,6 +88,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         GatewayAutoConfiguration,
                         GatewayMetricsAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration,
                         MetricsAutoConfiguration,
                         CompositeMeterRegistryAutoConfiguration,
                 ))
@@ -105,6 +109,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         GatewayAutoConfiguration,
                         GatewayMetricsAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration,
                         MetricsAutoConfiguration,
                         CompositeMeterRegistryAutoConfiguration,
                 ))
@@ -125,6 +130,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         GatewayAutoConfiguration,
                         GatewayMetricsAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration,
                 ))
                 .run({ context ->
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocatorMetrics)

@@ -18,13 +18,13 @@
 
 package net.bretti.openapi.route.definition.locator.autoconfigure
 
-
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRepository
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionUpdateScheduler
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocator
 import org.assertj.core.api.Assertions
 import org.springframework.boot.autoconfigure.AutoConfigurations
+import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration
@@ -40,6 +40,7 @@ class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
                         GatewayAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration
                 ))
                 .run({ context ->
                     Assertions.assertThat(context).hasSingleBean(OpenApiDefinitionRepository)
@@ -56,6 +57,7 @@ class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
                         GatewayAutoConfiguration,
                         WebFluxAutoConfiguration,
+                        SslAutoConfiguration
                 ))
                 .withPropertyValues("openapi-route-definition-locator.enabled=false")
                 .run({ context ->

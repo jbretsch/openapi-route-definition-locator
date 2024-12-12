@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/jbretsch/openapi-route-definition-locator?color=brightgreen)](https://github.com/jbretsch/openapi-route-definition-locator/blob/master/LICENSE)
 
 The OpenAPI Route Definition Locator is a
-[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/configuration.html)
+[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/configuration.html)
 for [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway). It dynamically creates route definitions
 based on OpenAPI (aka Swagger) definitions served by backend (micro)services.
 
@@ -19,7 +19,7 @@ routes can be challenging, but the OpenAPI Route Definition Locator simplifies t
 Traditionally, you might resort to:
 - manually creating route definitions for each public API endpoint in a static configuration file for Spring Cloud
   Gateway or
-- using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html)
+- using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html)
   Route Definition Locator to automatically generate a catch-all route for each microservice.
 
 However, both approaches have significant drawbacks:
@@ -153,7 +153,7 @@ service serves its OpenAPI definition from a different path, you can configure t
 Definition Locator accordingly. In fact, the OpenAPI definition can be
 retrieved from any HTTP(S) URL or from local locations referenced via the URL schemas `file:` or
 `classpath:` that are supported by Spring's
-[ResourceLoader](https://docs.spring.io/spring-framework/reference/6.1/core/resources.html#resources-resourceloader).
+[ResourceLoader](https://docs.spring.io/spring-framework/reference/6.2/core/resources.html#resources-resourceloader).
 The OpenAPI definition URI can be set globally or per service. Of course, you can set it also
 globally _and_ per service. The latter overrides the former.
 
@@ -196,10 +196,10 @@ openapi-route-definition-locator:
 #### Additional RouteDefinition attributes
 
 Spring Cloud Gateway route definitions can have more attributes. You may want to use
-- additional [predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/request-predicates-factories.html),
-- additional [filters](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/gatewayfilter-factories.html),
-- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route), or
-- [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/route-metadata-configuration.html)
+- additional [predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/request-predicates-factories.html),
+- additional [filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories.html),
+- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route), or
+- [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/route-metadata-configuration.html)
 
 with the routes created from your OpenAPI definitions.
 
@@ -207,10 +207,10 @@ First of all, the Spring Cloud Gateway default filters apply. See the section
 [Default Filters](#default-filters).
 
 Additionally, you can define
-[predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/request-predicates-factories.html),
-[filters](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/gatewayfilter-factories.html),
-[ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route),
-and [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/route-metadata-configuration.html)
+[predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/request-predicates-factories.html),
+[filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories.html),
+[ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route),
+and [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/route-metadata-configuration.html)
 at several places:
 - In your `application.yml` globally for all services. See the section
   [Additional RouteDefinition attributes in configuration file](#additional-routedefinition-attributes-in-configuration-file).
@@ -236,7 +236,7 @@ location is applied.
 ##### Default Filters
 
 As the OpenAPI Route Definition Locator is just another `RouteDefinitionLocator`, all
-[Default Filters](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/gatewayfilter-factories/default-filters.html)
+[Default Filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories/default-filters.html)
 you have defined in your `application.yml` also apply to the `RouteDefinitions` created by the
 OpenAPI Route Definition Locator.
 
@@ -439,7 +439,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/3.3/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/3.4/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -458,7 +458,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/3.3/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/3.4/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -476,7 +476,7 @@ If this property is not set or set to `true`, the OpenAPI Route Definition Locat
 The OpenAPI Route Definition Locator provides metrics via [Micrometer](https://micrometer.io/).
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/3.3/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/3.4/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```
