@@ -20,7 +20,7 @@ the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().a
 }
 
 val springCloudDependenciesVersion = "2022.0.5"
-val lombokVersion = "1.18.32"
+val lombokVersion = "1.18.36"
 val spockVersion = "2.4-M1-groovy-4.0"
 
 dependencies {

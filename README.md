@@ -153,7 +153,7 @@ service serves its OpenAPI definition from a different path, you can configure t
 Definition Locator accordingly. In fact, the OpenAPI definition can be
 retrieved from any HTTP(S) URL or from local locations referenced via the URL schemas `file:` or
 `classpath:` that are supported by Spring's
-[ResourceLoader](https://docs.spring.io/spring-framework/docs/6.0.19/reference/html/core.html#resources-resourceloader).
+[ResourceLoader](https://docs.spring.io/spring-framework/docs/6.0.21/reference/html/core.html#resources-resourceloader).
 The OpenAPI definition URI can be set globally or per service. Of course, you can set it also
 globally _and_ per service. The latter overrides the former.
 
@@ -439,7 +439,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.11/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.12/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -458,7 +458,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.11/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/docs/3.1.12/reference/html/features.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -476,7 +476,7 @@ If this property is not set or set to `true`, the OpenAPI Route Definition Locat
 The OpenAPI Route Definition Locator provides metrics via [Micrometer](https://micrometer.io/).
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.11/reference/html/actuator.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/docs/3.1.12/reference/html/actuator.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```
