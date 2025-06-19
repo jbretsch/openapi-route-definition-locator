@@ -53,6 +53,7 @@ flexibility and simplifying route management.
 
 | Version         | Spring Cloud | Spring Boot  | Minimum Java Version |
 |-----------------|--------------|--------------|----------------------|
+| x.y.z-sc-2025.0 | 2025.0.x     | 3.5.x        | 17                   |
 | x.y.z-sc-2024.0 | 2024.0.x     | 3.4.x        | 17                   |
 | x.y.z-sc-2023.0 | 2023.0.x     | 3.2.x, 3.3.x | 17                   |
 | x.y.z-sc-2022.0 | 2022.0.x     | 3.0.x, 3.1.x | 17                   |
