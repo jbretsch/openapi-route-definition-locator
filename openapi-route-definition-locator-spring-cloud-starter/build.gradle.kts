@@ -12,7 +12,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     testRuntimeOnly("io.micrometer:micrometer-registry-prometheus")
-    testImplementation("org.wiremock:wiremock-standalone:3.5.3")
+    testImplementation("org.wiremock:wiremock-standalone:3.13.1")
     testImplementation("org.apache.commons:commons-lang3")
 }
 
