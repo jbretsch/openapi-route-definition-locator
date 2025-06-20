@@ -16,8 +16,8 @@ tasks.jar {
 }
 
 dependencies {
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2024.0.0"))
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway")
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2025.0.0"))
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
     implementation(project(":openapi-route-definition-locator-spring-cloud-starter"))
     runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")

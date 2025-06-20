@@ -3,14 +3,16 @@ spring:
     name: api-manager
   cloud:
     gateway:
-      default-filters:
-        - AddResponseHeader=X-Response-FromGlobalConfig, global-sample-value
-      httpserver:
-        wiretap: true
-      httpclient:
-        pool:
-          metrics: true
-        wiretap: true
+      server:
+        webflux:
+          default-filters:
+            - AddResponseHeader=X-Response-FromGlobalConfig, global-sample-value
+          httpserver:
+            wiretap: true
+          httpclient:
+            pool:
+              metrics: true
+            wiretap: true
 
 logging:
   level:
@@ -25,7 +27,7 @@ logging:
 management:
   endpoint:
     gateway:
-      enabled: true
+      access: read_only
   endpoints:
     web:
       exposure:
