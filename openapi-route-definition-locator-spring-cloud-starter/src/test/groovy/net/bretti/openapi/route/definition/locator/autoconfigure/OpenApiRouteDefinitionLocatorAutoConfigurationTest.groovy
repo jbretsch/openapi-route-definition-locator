@@ -76,7 +76,7 @@ class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
                         GatewayAutoConfiguration,
                         WebFluxAutoConfiguration,
                 ))
-                .withPropertyValues("spring.cloud.gateway.enabled=false")
+                .withPropertyValues("spring.cloud.gateway.server.webflux.enabled=false")
                 .run({ context ->
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiDefinitionRepository)
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocatorProperties)

@@ -113,7 +113,7 @@ class OpenApiRouteDefinitionLocatorMetricsAutoConfigurationTest extends Specific
                         MetricsAutoConfiguration,
                         CompositeMeterRegistryAutoConfiguration,
                 ))
-                .withPropertyValues("spring.cloud.gateway.metrics.enabled=false")
+                .withPropertyValues("spring.cloud.gateway.server.webflux.metrics.enabled=false")
                 .run({ context ->
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocatorMetrics)
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocatorTimedMetrics)

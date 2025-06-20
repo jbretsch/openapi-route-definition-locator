@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/jbretsch/openapi-route-definition-locator?color=brightgreen)](https://github.com/jbretsch/openapi-route-definition-locator/blob/master/LICENSE)
 
 The OpenAPI Route Definition Locator is a
-[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/configuration.html)
+[RouteDefinitionLocator](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/configuration.html)
 for [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway). It dynamically creates route definitions
 based on OpenAPI (aka Swagger) definitions served by backend (micro)services.
 
@@ -19,7 +19,7 @@ routes can be challenging, but the OpenAPI Route Definition Locator simplifies t
 Traditionally, you might resort to:
 - manually creating route definitions for each public API endpoint in a static configuration file for Spring Cloud
   Gateway or
-- using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/the-discoveryclient-route-definition-locator.html)
+- using the [DiscoveryClient](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/the-discoveryclient-route-definition-locator.html)
   Route Definition Locator to automatically generate a catch-all route for each microservice.
 
 However, both approaches have significant drawbacks:
@@ -53,6 +53,7 @@ flexibility and simplifying route management.
 
 | Version         | Spring Cloud | Spring Boot  | Minimum Java Version |
 |-----------------|--------------|--------------|----------------------|
+| x.y.z-sc-2025.0 | 2025.0.x     | 3.5.x        | 17                   |
 | x.y.z-sc-2024.0 | 2024.0.x     | 3.4.x        | 17                   |
 | x.y.z-sc-2023.0 | 2023.0.x     | 3.2.x, 3.3.x | 17                   |
 | x.y.z-sc-2022.0 | 2022.0.x     | 3.0.x, 3.1.x | 17                   |
@@ -127,14 +128,16 @@ configured it manually in the `application.yml`.
 spring:
   cloud:
     gateway:
-      routes:
-         - id: 36e0f904-0b89-446e-9aee-5cd0285cb54f
-           uri: http://service-users:8080
-           predicates:
-             - Method=GET 
-             - Path=/users
+      server:
+        webflux:
+          routes:
+             - id: 36e0f904-0b89-446e-9aee-5cd0285cb54f
+               uri: http://service-users:8080
+               predicates:
+                 - Method=GET
+                 - Path=/users
 
-         # More routes for http://service-orders:8080. 
+             # More routes for http://service-orders:8080.
 ```
 
 ### Sample applications
@@ -197,10 +200,10 @@ openapi-route-definition-locator:
 #### Additional RouteDefinition attributes
 
 Spring Cloud Gateway route definitions can have more attributes. You may want to use
-- additional [predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/request-predicates-factories.html),
-- additional [filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories.html),
-- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route), or
-- [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/route-metadata-configuration.html)
+- additional [predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/request-predicates-factories.html),
+- additional [filters](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/gatewayfilter-factories.html),
+- explicit [ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/actuator-api.html#gateway-retrieving-information-about-a-particular-route), or
+- [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/route-metadata-configuration.html)
 
 with the routes created from your OpenAPI definitions.
 
@@ -208,10 +211,10 @@ First of all, the Spring Cloud Gateway default filters apply. See the section
 [Default Filters](#default-filters).
 
 Additionally, you can define
-[predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/request-predicates-factories.html),
-[filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories.html),
-[ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/actuator-api.html#gateway-retrieving-information-about-a-particular-route),
-and [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/route-metadata-configuration.html)
+[predicates](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/request-predicates-factories.html),
+[filters](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/gatewayfilter-factories.html),
+[ordering](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/actuator-api.html#gateway-retrieving-information-about-a-particular-route),
+and [metadata](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/route-metadata-configuration.html)
 at several places:
 - In your `application.yml` globally for all services. See the section
   [Additional RouteDefinition attributes in configuration file](#additional-routedefinition-attributes-in-configuration-file).
@@ -237,7 +240,7 @@ location is applied.
 ##### Default Filters
 
 As the OpenAPI Route Definition Locator is just another `RouteDefinitionLocator`, all
-[Default Filters](https://docs.spring.io/spring-cloud-gateway/reference/4.2/spring-cloud-gateway/gatewayfilter-factories/default-filters.html)
+[Default Filters](https://docs.spring.io/spring-cloud-gateway/reference/4.3/spring-cloud-gateway-server-webflux/gatewayfilter-factories/default-filters.html)
 you have defined in your `application.yml` also apply to the `RouteDefinitions` created by the
 OpenAPI Route Definition Locator.
 
@@ -246,8 +249,10 @@ For example:
 spring:
   cloud:
     gateway:
-      default-filters:
-        - AddResponseHeader=X-Response-FromGlobalConfig, global-sample-value
+      server:
+        webflux:
+          default-filters:
+            - AddResponseHeader=X-Response-FromGlobalConfig, global-sample-value
 ```
 
 ##### Additional RouteDefinition attributes in configuration file
@@ -440,7 +445,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/3.4/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -459,7 +464,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/3.4/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -477,7 +482,7 @@ If this property is not set or set to `true`, the OpenAPI Route Definition Locat
 The OpenAPI Route Definition Locator provides metrics via [Micrometer](https://micrometer.io/).
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/3.4/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/3.5/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```
