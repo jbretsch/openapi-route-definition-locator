@@ -20,6 +20,9 @@ package net.bretti.openapi.route.definition.locator.autoconfigure;
 
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
 import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
+import net.bretti.openapi.route.definition.locator.core.impl.filter.EnabledFlagFilter;
+import net.bretti.openapi.route.definition.locator.core.impl.filter.GatewayNameFilter;
+import net.bretti.openapi.route.definition.locator.core.filter.OpenApiRouteDefinitionFilter;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRepository;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionUpdateScheduler;
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocator;
@@ -62,13 +65,26 @@ public class OpenApiRouteDefinitionLocatorAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "openapi-route-definition-locator.internal.filters.enabled-flag-filter.enabled", matchIfMissing = true)
+    public EnabledFlagFilter enabledFlagFilter() {
+        return new EnabledFlagFilter();
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "openapi-route-definition-locator.internal.filters.gateway-name-filter.enabled", matchIfMissing = true)
+    public GatewayNameFilter gatewayNameFilter(OpenApiRouteDefinitionLocatorProperties properties) {
+        return new GatewayNameFilter(properties);
+    }
+
+    @Bean
     public OpenApiRouteDefinitionLocator openApiRouteDefinitionLocator(
             OpenApiDefinitionRepository openApiDefinitionRepository,
+            List<OpenApiRouteDefinitionFilter> openApiRouteDefinitionFilters,
             List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers,
             OpenApiRouteDefinitionLocatorProperties openApiRouteDefinitionLocatorProperties
     ) {
-        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository, openApiRouteDefinitionCustomizers,
-                openApiRouteDefinitionLocatorProperties);
+        return new OpenApiRouteDefinitionLocator(openApiDefinitionRepository, openApiRouteDefinitionFilters,
+                openApiRouteDefinitionCustomizers, openApiRouteDefinitionLocatorProperties);
     }
 
     @Bean

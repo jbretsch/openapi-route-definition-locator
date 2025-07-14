@@ -26,7 +26,7 @@ However, both approaches have significant drawbacks:
 - Static route management becomes increasingly cumbersome as the number of microservices grows, especially when
   multiple teams are involved. Synchronizing API Gateway configurations with microservice releases in a large
   organization can be time-consuming and error-prone.
-- DiscoveryClient’s automatic route generation per default exposes internal service identifiers in public URLs and
+- DiscoveryClient's automatic route generation by default exposes internal service identifiers in public URLs and
   results in tightly coupling public URLs with the internal service organization, reducing flexibility and
   making future changes more difficult.
 
@@ -115,11 +115,7 @@ paths:
     get:
       responses:
         200:
-          description: ''
-          content:
-            text/plain:
-              schema:
-                type: string
+          description: 'Get all users'
 ```
 
 Then the OpenAPI Route Definition Locator creates a route definition that would look like this if you
@@ -149,14 +145,14 @@ instructions and additional information, refer to the [sample-apps/README.md](sa
 
 #### URI to OpenAPI definition
 
-Per default the OpenAPI definition of a service is retrieved via the URL path
+By default, the OpenAPI definition of a service is retrieved via the URL path
 `/internal/openapi-definition` relative to the base URL of the respective service. If your
 service serves its OpenAPI definition from a different path, you can configure the OpenAPI Route
 Definition Locator accordingly. In fact, the OpenAPI definition can be
-retrieved from any HTTP(S) URL or from local locations referenced via the URL schemas `file:` or
+retrieved from any HTTP(S) URL or from local locations referenced via the URL schemes `file:` or
 `classpath:` that are supported by Spring's
 [ResourceLoader](https://docs.spring.io/spring-framework/docs/5.3.31/reference/html/core.html#resources-resourceloader).
-The OpenAPI definition URI can be set globally or per service. Of course, you can set it also
+The OpenAPI definition URI can be set globally or per service. You can also set it both
 globally _and_ per service. The latter overrides the former.
 
 Setting the OpenAPI definition URL globally:
@@ -297,7 +293,7 @@ You do this by adding the configuration properties you would have otherwise adde
 `application.yml` to your OpenAPI definition within the object `x-gateway-route-settings` at the 
 top level (for global settings) or at the operation level (for operation specific settings).
 
-Let's say, the `service-users` provides two HTTP endpoints
+Let's say the `service-users` provides two HTTP endpoints
 - `GET /api/users` and
 - `GET /api/users/{userId}`
 
@@ -310,12 +306,12 @@ And you want the `GET /users/{userId}` endpoint to be available only after
 
 Spring Cloud Gateway offers the `PrefixPath` filter and the `After` predicate for those tasks.
 
-You can use them in your OpenAPI definition as follows.
+You can use them in your OpenAPI definition as follows:
 ```yaml
 openapi: 3.0.3
 info:
   title: Users API
-  version: 0.1.
+  version: 0.1.0
 x-gateway-route-settings:
   filters:
     - PrefixPath=/api
@@ -324,11 +320,7 @@ paths:
     get:
       responses:
         200:
-          description: ''
-          content:
-            text/plain:
-              schema:
-                type: string
+          description: 'Get all users'
   /users/{userId}:
     get:
       parameters:
@@ -339,11 +331,7 @@ paths:
           required: true
       responses:
         200:
-          description: ''
-          content:
-            text/plain:
-              schema:
-                type: string
+          description: 'Get user by ID'
       x-gateway-route-settings:
         predicates:
           - After=2022-01-20T17:42:47.789+01:00[Europe/Berlin]
@@ -379,7 +367,7 @@ For cases in which you need more control over the `RouteDefinitions` which are c
 your OpenAPI definitions, the OpenAPI Route Definition Locator provides a hook you can use to
 dynamically alter those `RouteDefinitions`.
 
-For this you have to implement one or more Spring beans which implement the
+For this you have to register one or more Spring beans which implement the
 `OpenApiRouteDefinitionCustomizer` interface. Each of those customizer beans is called for each
 created `RouteDefinition`. In your customizer method you have access to
 
@@ -396,6 +384,7 @@ package net.bretti.sample.apigateway.customizer;
 
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
 import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
+import net.bretti.openapi.route.definition.locator.core.impl.utils.MapMerge;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.stereotype.Component;
@@ -411,7 +400,8 @@ public class SampleOpenApiRouteDefinitionCustomizer implements OpenApiRouteDefin
             Map<String, Object> openApiGlobalExtensions,
             Map<String, Object> openApiOperationExtensions
     ) {
-        Object xSampleKeyValue = openApiOperationExtensions.get("x-sample-key");
+        Map<String, Object> openApiExtensions = MapMerge.deepMerge(openApiGlobalExtensions, openApiOperationExtensions);
+        Object xSampleKeyValue = openApiExtensions.get("x-sample-key");
         if (!(xSampleKeyValue instanceof String)) {
             return;
         }
@@ -424,6 +414,186 @@ public class SampleOpenApiRouteDefinitionCustomizer implements OpenApiRouteDefin
 
 Also see the
 [SampleOpenApiRouteDefinitionCustomizer.java](sample-apps/api-gateway/src/main/java/net/bretti/sample/apigateway/customizer/SampleOpenApiRouteDefinitionCustomizer.java)
+and the [openapi.public.yaml](sample-apps/service-users/src/main/resources/openapi.public.yaml)
+in the sample apps.
+
+#### Filter RouteDefinitions
+
+You can filter which API operations from your OpenAPI definitions are published as routes in the gateway. This may be
+useful in the following scenarios:
+- When your OpenAPI definition contains both internal and public API operations (although it's still recommended to
+  provide separate OpenAPI definitions for public operations).
+- When you have multiple functionally different gateways, such as separate gateways for UI clients, mobile apps, or B2B
+  (Business-to-Business) integrations.
+- When you need environment-specific route publishing or gradual API rollouts.
+
+There are several filtering options available.
+
+##### Enabled Flag Filter
+
+You can prevent an API operation from being published as a route in the gateway by setting `enabled: false` in its
+`x-gateway-route-settings` in the respective OpenAPI definition. You can also set this flag in the global
+`x-gateway-route-settings` which apply to all API operations in the respective OpenAPI definition. Flag values on the
+operation level override global flag values. The default value is `true`, meaning operations are published by default.
+
+Example OpenAPI definition with a disabled operation:
+```yaml
+openapi: 3.0.3
+info:
+  title: Users API
+  version: 0.1.0
+# Uncommenting these global settings would disable all API operations in this OpenAPI definition.
+# x-gateway-route-settings:
+#  enabled: false
+paths:
+  /users:
+    # This operation will be published as a route.
+    get:
+      responses:
+        200:
+          description: 'Get all users'
+  /users/{userId}:
+    # This operation will not be published as a route because of its x-gateway-route-settings below.
+    get:
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Get user by ID'
+      x-gateway-route-settings:
+        enabled: false
+```
+
+This filter logic is implemented in the
+[EnabledFlagFilter](openapi-route-definition-locator-core/src/main/java/net/bretti/openapi/route/definition/locator/core/impl/filter/EnabledFlagFilter.java).
+You can disable this filter with the following setting:
+```yaml
+openapi-route-definition-locator:
+  internal:
+    filters:
+      enabled-flag-filter:
+        enabled: false
+```
+
+##### Gateway Name Filter
+
+You can control which gateways publish specific API operations by using the `gateway-names` array in
+`x-gateway-route-settings` in the OpenAPI definitions.
+
+First, configure your gateway's identity in its `application.yml`:
+```yaml
+openapi-route-definition-locator:
+  gateway-name: ui-gateway
+```
+
+Then specify which gateways should publish each operation in your OpenAPI definition:
+```yaml
+openapi: 3.0.3
+info:
+  title: Users API
+  version: 0.1.0
+paths:
+  /users/{userId}:
+    # Published in all gateways because no `gateway-names` are set for this operation.
+    get:
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Get user by ID'
+  /users:
+    # Only published in two gateways (see `gateway-names` below).
+    post:
+      responses:
+        201:
+          description: 'User was created'
+      x-gateway-route-settings:
+        gateway-names:
+          - ui-gateway
+          - mobile-gateway
+    # Only published in one gateway (see `gateway-names` below).
+    get:
+      responses:
+        200:
+          description: 'Get all users'
+      x-gateway-route-settings:
+        gateway-names:
+          - b2b-gateway
+```
+
+**The gateway name filtering behavior in a nutshell:**
+- If a gateway has no `gateway-name` configured, API operations are published regardless of their `gateway-names` settings.
+- If an API operation has no `gateway-names` specified, the operation is published in all gateways regardless of their
+  configured `gateway-name`.
+- If a gateway has a `gateway-name` configured and an API operation specifies `gateway-names`, then the operation is
+  only published in this gateway if the configured `gateway-name` is included in the operation's `gateway-names` array.
+
+This filter logic is implemented in the
+[GatewayNameFilter](openapi-route-definition-locator-core/src/main/java/net/bretti/openapi/route/definition/locator/core/impl/filter/GatewayNameFilter.java).
+You can disable this filter with the following setting:
+```yaml
+openapi-route-definition-locator:
+  internal:
+    filters:
+      gateway-name-filter:
+        enabled: false
+```
+
+##### Custom RouteDefinitions filtering
+
+For more advanced filtering logic, you can register one or more custom Spring beans which implement the
+`OpenApiRouteDefinitionFilter` interface. The OpenAPI Route Definition Locator calls these filter beans for
+the `RouteDefinitions` it creates. Such a `RouteDefinition` is only published in the gateway if all registered
+filters accept the `RouteDefinition`, i.e., if their `OpenApiRouteDefinitionFilter::test` method returns `true`.
+In this `test` method you have access to the same parameters as for
+[OpenApiRouteDefinitionCustomizers](#customize-routedefinitions-dynamically). Filters are applied before customizers.
+
+Example filter:
+```java
+package net.bretti.sample.apigateway.filter;
+
+import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
+import net.bretti.openapi.route.definition.locator.core.filter.OpenApiRouteDefinitionFilter;
+import net.bretti.openapi.route.definition.locator.core.impl.utils.MapMerge;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.Objects;
+
+@Component
+public class SampleOpenApiRouteDefinitionFilter implements OpenApiRouteDefinitionFilter {
+
+    @Override
+    public boolean test(RouteDefinition routeDefinition,
+                        OpenApiRouteDefinitionLocatorProperties.Service service,
+                        Map<String, Object> openApiGlobalExtensions,
+                        Map<String, Object> openApiOperationExtensions) {
+
+        // Example: Only publish operations marked for the current environment.
+        Map<String, Object> openApiExtensions = MapMerge.deepMerge(openApiGlobalExtensions, openApiOperationExtensions);
+        Object apiOperationEnv = openApiExtensions.get("x-environment");
+        if (apiOperationEnv instanceof String) {
+            String currentEnv = System.getenv("DEPLOY_ENV");
+            return Objects.equals(currentEnv, apiOperationEnv.toString());
+        }
+
+        // Publish API operation if it specifies no environment.
+        return true;
+    }
+}
+```
+
+Also see the
+[SampleOpenApiRouteDefinitionFilter.java](sample-apps/api-gateway/src/main/java/net/bretti/sample/apigateway/filter/SampleOpenApiRouteDefinitionFilter.java)
 and the [openapi.public.yaml](sample-apps/service-users/src/main/resources/openapi.public.yaml)
 in the sample apps.
 
@@ -447,12 +617,12 @@ for possible duration values.
 ##### Grace period for removal of route definitions
 
 When the OpenAPI Route Definition Locator encounters a problem while retrieving the OpenAPI definition
-from a service, it does _not_ immediately remove its routes definitions. The rationale is: Your service
-may still be able to serve normal API requests although there was a problem with retrieving its OpenAPI
+from a service, it does _not_ immediately remove its route definitions. The rationale is that your service
+may still be able to serve normal API requests even though there was a problem with retrieving its OpenAPI
 definition.
 
-However, after some grace period, the route definitions _are_ removed. The default is 15 minutes.
-You can configure a different grace period with the following Spring property. 
+However, after a grace period, the route definitions _are_ removed. The default is 15 minutes.
+You can configure a different grace period with the following Spring property:
 
 ```yaml
 openapi-route-definition-locator:
@@ -524,4 +694,3 @@ openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_r
 openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="failure",update_result_detailed="failure_retrieval",upstream_service="service-users",} 0.0
 openapi_route_definition_locator_openapi_definition_updates_seconds_max{update_result="failure",update_result_detailed="failure_publication",upstream_service="service-users",} 0.0
 ```
-

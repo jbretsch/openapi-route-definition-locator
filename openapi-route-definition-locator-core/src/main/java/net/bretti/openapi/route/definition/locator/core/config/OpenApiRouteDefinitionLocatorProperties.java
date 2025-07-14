@@ -22,6 +22,8 @@ import lombok.Data;
 import net.bretti.openapi.route.definition.locator.core.config.validation.OnlyUniqueServiceIds;
 import net.bretti.openapi.route.definition.locator.core.config.validation.ValidBaseUri;
 import net.bretti.openapi.route.definition.locator.core.config.validation.ValidOpenApiDefinitionUri;
+import net.bretti.openapi.route.definition.locator.core.impl.filter.GatewayNameFilter;
+import net.bretti.openapi.route.definition.locator.core.impl.validator.NullOrNotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
@@ -76,6 +78,15 @@ public class OpenApiRouteDefinitionLocatorProperties {
      */
     @ValidOpenApiDefinitionUri
     private URI openapiDefinitionUri = URI.create(DEFAULT_OPENAPI_DEFINITION_URI);
+
+    /**
+     * The name of the gateway. This name is used by the
+     * {@link GatewayNameFilter}.
+     * If specified, only routes for OpenAPI operations which specify this gateway name or no gateway name will be
+     * created in this gateway. If not specified, all routes for all enabled OpenAPI operations will be created.
+     */
+    @NullOrNotBlank
+    private String gatewayName;
 
     @Data
     public static class Service {

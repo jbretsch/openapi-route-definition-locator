@@ -26,9 +26,12 @@ import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinit
 import org.assertj.core.api.Assertions
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
+import org.springframework.boot.context.properties.bind.validation.BindValidationException
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration
 import spock.lang.Specification
+
+import javax.validation.ConstraintViolationException
 
 class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
     private final ReactiveWebApplicationContextRunner contextRunner = new ReactiveWebApplicationContextRunner()
@@ -89,12 +92,29 @@ class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
                 .withConfiguration(AutoConfigurations.of(
                         OpenApiRouteDefinitionLocatorAutoConfiguration,
                 ))
-                .withPropertyValues("openapi-route-definition-locator.enabled=false")
                 .run({ context ->
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiDefinitionRepository)
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocatorProperties)
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiRouteDefinitionLocator)
                     Assertions.assertThat(context).doesNotHaveBean(OpenApiDefinitionUpdateScheduler)
+                })
+    }
+
+    def "Startup fails if configured gateway name is blank"() {
+        expect:
+        contextRunner
+                .withConfiguration(AutoConfigurations.of(
+                        OpenApiRouteDefinitionLocatorAutoConfiguration,
+                        GatewayAutoConfiguration,
+                        WebFluxAutoConfiguration,
+                ))
+                .withPropertyValues("openapi-route-definition-locator.gateway-name=   ")
+                .run({ context ->
+                    Assertions.assertThat(context).hasFailed()
+                    Assertions.assertThat(context.getStartupFailure()).hasRootCauseInstanceOf(BindValidationException.class)
+                    Assertions.assertThat(context.getStartupFailure()).getRootCause().hasMessageContaining(
+                            "Field error in object 'openapi-route-definition-locator' on field 'gatewayName'"
+                    )
                 })
     }
 

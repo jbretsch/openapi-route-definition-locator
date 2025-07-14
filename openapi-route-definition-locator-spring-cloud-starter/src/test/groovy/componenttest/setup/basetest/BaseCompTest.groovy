@@ -22,12 +22,13 @@ import componenttest.setup.app.TestApiGatewayApplication
 import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServiceMock1
 import componenttest.setup.wiremock.OpenapiDefinitionServedFromDifferentHostServiceMock2
 import componenttest.setup.wiremock.OrderServiceMock
+import componenttest.setup.wiremock.RouteDefinitionFilteringServiceMock
 import componenttest.setup.wiremock.UserServiceMock
 import groovy.json.JsonSlurper
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -65,6 +66,7 @@ abstract class BaseCompTest extends Specification {
         OrderServiceMock.instance.resetAll()
         OpenapiDefinitionServedFromDifferentHostServiceMock1.instance.resetAll()
         OpenapiDefinitionServedFromDifferentHostServiceMock2.instance.resetAll()
+        RouteDefinitionFilteringServiceMock.instance.resetAll()
     }
 
     Map extractRoute(List routes, String httpMethod, String path) {
@@ -90,6 +92,12 @@ abstract class BaseCompTest extends Specification {
     }
 
     void waitForRemovalOfAllRoutes() {
+        waitForRouteRemoval {
+            assert getRoutesFromActuatorEndpoint().size() == 0
+        }
+    }
+
+    void waitForRemovalOfAllRoutesExceptThoseReadFromClasspath() {
         waitForRouteRemoval {
             // One route remains because it comes from an OpenAPI definition read from the classpath.
             assert getRoutesFromActuatorEndpoint().size() == 1
