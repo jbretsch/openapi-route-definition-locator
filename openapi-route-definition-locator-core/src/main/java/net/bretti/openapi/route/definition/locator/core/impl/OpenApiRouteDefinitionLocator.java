@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
 import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
+import net.bretti.openapi.route.definition.locator.core.filter.OpenApiRouteDefinitionFilter;
 import net.bretti.openapi.route.definition.locator.core.impl.utils.MapMerge;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
@@ -42,6 +43,8 @@ import static net.bretti.openapi.route.definition.locator.core.impl.utils.Option
 public class OpenApiRouteDefinitionLocator implements RouteDefinitionLocator {
 
     private final OpenApiDefinitionRepository repository;
+
+    private final List<OpenApiRouteDefinitionFilter> openApiRouteDefinitionFilters;
 
     private final List<OpenApiRouteDefinitionCustomizer> openApiRouteDefinitionCustomizers;
 
@@ -84,6 +87,15 @@ public class OpenApiRouteDefinitionLocator implements RouteDefinitionLocator {
                     operation.getMetadata()
             );
             metaData.ifPresent(routeDefinition::setMetadata);
+
+            // Apply filters before customizers.
+            boolean shouldInclude = openApiRouteDefinitionFilters.stream()
+                    .allMatch(filter -> filter.test(routeDefinition, service, operation.getOpenApiExtension(),
+                            operation.getOpenApiOperationExtension()));
+            
+            if (!shouldInclude) {
+                return; // Skip this route.
+            }
 
             openApiRouteDefinitionCustomizers.forEach(customizer ->
                 customizer.customize(routeDefinition, service, operation.getOpenApiExtension(),

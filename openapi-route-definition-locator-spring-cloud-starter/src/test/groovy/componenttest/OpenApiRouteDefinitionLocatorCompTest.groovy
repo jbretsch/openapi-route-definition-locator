@@ -32,7 +32,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
     def "API Gateway routes requests according to OpenAPI definitions"() {
         given:
-        waitForRemovalOfAllRoutes()
+        waitForRemovalOfAllRoutesExceptThoseReadFromClasspath()
 
         and:
         UserServiceMock.instance.mockOpenApiDefinition()
@@ -51,7 +51,8 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
         when:
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 7
+            // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+            assert getRoutesFromActuatorEndpoint().size() == 6
         }
 
         and:
@@ -124,27 +125,9 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         ]
         getOrdersRoute.size() == 6
 
-        and:
+        and: "Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition."
         Map getOrderRoute = extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}")
-        getOrderRoute.predicate == "(Methods: [GET] && Paths: [/users/{userId}/orders/{orderId}], match trailing slash: true)"
-        getOrderRoute.route_id != null
-        getOrderRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 2]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
-                "[[SetStatus status = '418'], order = 4]",
-        ]
-        getOrderRoute.uri == "http://localhost:9092"
-        getOrderRoute.order == 1
-        getOrderRoute.metadata == [
-                optionName           : "OptionValue",
-                compositeObject      : [name: "value"],
-                aList                : ["foo", "bar"],
-                defaultForAllServices: 'OptionValueAll',
-                iAmNumber            : 1,
-        ]
-        getOrderRoute.size() == 6
+        getOrderRoute == null
 
         and:
         Map postOrderRoute = extractRoute(routes, "POST", "/users/{userId}/orders")
@@ -262,8 +245,16 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getOrderResponse.status.value() == 418
-        getOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
+        // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+        getOrderResponse.status.value() == 404
+        String getOrderResponseBody = getOrderResponse.getResponseBody().blockFirst()
+        Map getOrderResponseBodyJson = jsonSlurper.parseText(getOrderResponseBody) as Map
+        getOrderResponseBodyJson.timestamp != null
+        getOrderResponseBodyJson.path == "/users/${USER_ID}/orders/${ORDER_ID}"
+        getOrderResponseBodyJson.status == 404
+        getOrderResponseBodyJson.error == "Not Found"
+        getOrderResponseBodyJson.message == null
+        getOrderResponseBodyJson.requestId != null
 
         when:
         FluxExchangeResult<String> postOrderResponse = webTestClient
@@ -286,7 +277,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
     def "OpenAPI Route Definition are removed on retrieval errors only after grace period"() {
         given:
-        waitForRemovalOfAllRoutes()
+        waitForRemovalOfAllRoutesExceptThoseReadFromClasspath()
 
         and:
         UserServiceMock.instance.mockOpenApiDefinition()
@@ -294,7 +285,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
         when:
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 6
+            assert getRoutesFromActuatorEndpoint().size() == 5
         }
 
         and:
@@ -304,7 +295,8 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         extractRoute(routes, "GET", "/users") != null
         extractRoute(routes, "GET", "/users/{userId}") != null
         extractRoute(routes, "GET", "/users/{userId}/orders") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
+        // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
         extractRoute(routes, "POST", "/users/{userId}/orders") != null
         extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
 
@@ -334,7 +326,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
     def "Error in OpenAPI definition of service A does not affect routes for service B"() {
         given:
-        waitForRemovalOfAllRoutes()
+        waitForRemovalOfAllRoutesExceptThoseReadFromClasspath()
 
         and: 'OpenAPI definition of one of two services contains an unknown Spring Cloud Gateway Filter'
         UserServiceMock.instance.mockOpenApiDefinition()
@@ -360,7 +352,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
         and: 'having waited for operations to have been published'
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 6
+            assert getRoutesFromActuatorEndpoint().size() == 5
         }
         routes = getRoutesFromActuatorEndpoint()
 
@@ -368,7 +360,8 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         extractRoute(routes, "GET", "/users") != null
         extractRoute(routes, "GET", "/users/{userId}") != null
         extractRoute(routes, "GET", "/users/{userId}/orders") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
+        // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
         extractRoute(routes, "POST", "/users/{userId}/orders") != null
         extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
 
@@ -396,7 +389,7 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
 
         and: 'having waited for operations to have been published'
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 6
+            assert getRoutesFromActuatorEndpoint().size() == 5
         }
         routes = getRoutesFromActuatorEndpoint()
 
@@ -404,7 +397,8 @@ class OpenApiRouteDefinitionLocatorCompTest extends BaseCompTest {
         extractRoute(routes, "GET", "/users") != null
         extractRoute(routes, "GET", "/users/{userId}") != null
         extractRoute(routes, "GET", "/users/{userId}/orders") != null
-        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") != null
+        // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+        extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}") == null
         extractRoute(routes, "POST", "/users/{userId}/orders") != null
         extractRoute(routes, "GET", "/entities-of-service-with-openapi-definition-in-classpath") != null
     }
