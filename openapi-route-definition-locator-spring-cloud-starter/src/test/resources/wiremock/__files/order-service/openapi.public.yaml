@@ -35,6 +35,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
       x-gateway-route-settings:
+        gateway-names:
+          - gateway-01-inactive
+          - gateway-02-active
         filters:
           - name: SetStatus
             args:
@@ -62,6 +65,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
+      x-gateway-route-settings:
+        gateway-names:
+          - gateway-01-inactive
   /users/{userId}/orders/{orderId}:
     get:
       summary: Returns an order.
@@ -78,6 +84,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
       x-gateway-route-settings:
+        enabled: false
         filters:
           - name: SetStatus
             args:

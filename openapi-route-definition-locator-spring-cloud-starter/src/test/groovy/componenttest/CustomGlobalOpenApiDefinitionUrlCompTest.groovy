@@ -31,7 +31,7 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
 
     def "API Gateway routes requests according to OpenAPI definitions"() {
         given:
-        waitForRemovalOfAllRoutes()
+        waitForRemovalOfAllRoutesExceptThoseReadFromClasspath()
 
         and:
         UserServiceMock.instance.mockOpenApiDefinition("/global-custom-path-to/openapi-definition")
@@ -50,7 +50,8 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
 
         when:
         waitForRouteAddition {
-            assert getRoutesFromActuatorEndpoint().size() == 7
+            // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+            assert getRoutesFromActuatorEndpoint().size() == 6
         }
 
         and:
@@ -124,27 +125,9 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         ]
         getOrdersRoute.size() == 6
 
-        and:
+        and: "Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition."
         Map getOrderRoute = extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}")
-        getOrderRoute.predicate == "((${predicateLambdaTrue} && Methods: [GET]) && Paths: [/users/{userId}/orders/{orderId}], match trailing slash: true)"
-        getOrderRoute.route_id != null
-        getOrderRoute.filters == [
-                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
-                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 2]",
-                "[[AddResponseHeader name = 'X-Response-FromOpenApiDefinition', value = 'sample-value', override = true], order = 3]",
-                "[[SetStatus status = '418'], order = 4]",
-        ]
-        getOrderRoute.uri == "http://localhost:9092"
-        getOrderRoute.order == 1
-        getOrderRoute.metadata == [
-                optionName           : "OptionValue",
-                compositeObject      : [name: "value"],
-                aList                : ["foo", "bar"],
-                defaultForAllServices: 'OptionValueAll',
-                iAmNumber            : 1,
-        ]
-        getOrderRoute.size() == 6
+        getOrderRoute == null
 
         and:
         Map postOrderRoute = extractRoute(routes, "POST", "/users/{userId}/orders")
@@ -262,8 +245,16 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getOrderResponse.status.value() == 418
-        getOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
+        // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
+        getOrderResponse.status.value() == 404
+        String getOrderResponseBody = getOrderResponse.getResponseBody().blockFirst()
+        Map getOrderResponseBodyJson = jsonSlurper.parseText(getOrderResponseBody) as Map
+        getOrderResponseBodyJson.timestamp != null
+        getOrderResponseBodyJson.path == "/users/${USER_ID}/orders/${ORDER_ID}"
+        getOrderResponseBodyJson.status == 404
+        getOrderResponseBodyJson.error == "Not Found"
+        getOrderResponseBodyJson.message == null
+        getOrderResponseBodyJson.requestId != null
 
         when:
         FluxExchangeResult<String> postOrderResponse = webTestClient
