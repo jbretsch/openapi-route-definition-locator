@@ -18,7 +18,6 @@
 
 package net.bretti.openapi.route.definition.locator.autoconfigure
 
-
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionRepository
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiDefinitionUpdateScheduler
@@ -30,8 +29,6 @@ import org.springframework.boot.context.properties.bind.validation.BindValidatio
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration
 import spock.lang.Specification
-
-import javax.validation.ConstraintViolationException
 
 class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
     private final ReactiveWebApplicationContextRunner contextRunner = new ReactiveWebApplicationContextRunner()
@@ -112,7 +109,7 @@ class OpenApiRouteDefinitionLocatorAutoConfigurationTest extends Specification {
                 .run({ context ->
                     Assertions.assertThat(context).hasFailed()
                     Assertions.assertThat(context.getStartupFailure()).hasRootCauseInstanceOf(BindValidationException.class)
-                    Assertions.assertThat(context.getStartupFailure()).getRootCause().hasMessageContaining(
+                    Assertions.assertThat(context.getStartupFailure()).rootCause().hasMessageContaining(
                             "Field error in object 'openapi-route-definition-locator' on field 'gatewayName'"
                     )
                 })
