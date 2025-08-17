@@ -62,10 +62,10 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getUsersRoute.predicate == "((Methods: [GET] && Paths: [/users], match trailing slash: true) && Header: Authorization regexp=null)"
         getUsersRoute.route_id != null
         getUsersRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForOneService = 'sample-value-one'], order = 2]",
-                "[[AddResponseHeader X-Auth-Type-Was = 'Application'], order = 3]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForOneService', value = 'sample-value-one', override = true], order = 2]",
+                "[[AddResponseHeader name = 'X-Auth-Type-Was', value = 'Application', override = true], order = 3]",
         ]
         getUsersRoute.uri == "http://localhost:9091"
         getUsersRoute.order == 6
@@ -85,10 +85,10 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
                 "Header: Authorization regexp=null)"
         getUserRoute.route_id != null
         getUserRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForOneService = 'sample-value-one'], order = 2]",
-                "[[AddResponseHeader X-Auth-Type-Was = 'Application User'], order = 3]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForOneService', value = 'sample-value-one', override = true], order = 2]",
+                "[[AddResponseHeader name = 'X-Auth-Type-Was', value = 'Application User', override = true], order = 3]",
         ]
         getUserRoute.uri == "http://localhost:9091"
         getUserRoute.order == 6
@@ -104,10 +104,10 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getOrdersRoute.predicate == "(Methods: [GET] && Paths: [/users/{userId}/orders], match trailing slash: true)"
         getOrdersRoute.route_id != null
         getOrdersRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
                 "[[PrefixPath prefix = '/api'], order = 2]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
+                "[[AddResponseHeader name = 'X-Response-FromOpenApiDefinition', value = 'sample-value', override = true], order = 3]",
                 "[[SetStatus status = '418'], order = 4]",
         ]
         getOrdersRoute.uri == "http://localhost:9092"
@@ -133,10 +133,10 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         postOrderRoute.predicate == "(Methods: [POST] && Paths: [/users/{userId}/orders], match trailing slash: true)"
         postOrderRoute.route_id != null
         postOrderRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
                 "[[PrefixPath prefix = '/api'], order = 2]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
+                "[[AddResponseHeader name = 'X-Response-FromOpenApiDefinition', value = 'sample-value', override = true], order = 3]",
         ]
         postOrderRoute.uri == "http://localhost:9092"
         postOrderRoute.order == 1
@@ -154,8 +154,8 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getThingsRoute.predicate == "(Methods: [GET] && Paths: [/things], match trailing slash: true)"
         getThingsRoute.route_id != null
         getThingsRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
         ]
         getThingsRoute.uri == "http://localhost:9093"
         getThingsRoute.order == 5
@@ -167,8 +167,8 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         getOpenApiInClassPathEntitiesRoute.predicate == "(Methods: [GET] && Paths: [/entities-of-service-with-openapi-definition-in-classpath], match trailing slash: true)"
         getOpenApiInClassPathEntitiesRoute.route_id != null
         getOpenApiInClassPathEntitiesRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-FromGlobalConfig', value = 'global-sample-value', override = true], order = 1]",
+                "[[AddResponseHeader name = 'X-Response-DefaultForAllServices', value = 'sample-value-all', override = true], order = 1]",
         ]
         getOpenApiInClassPathEntitiesRoute.uri == "http://localhost:9095"
         getOpenApiInClassPathEntitiesRoute.order == 5
