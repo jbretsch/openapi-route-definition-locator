@@ -1,0 +1,5 @@
+openapi-route-definition-locator:
+  gateway-name: test-gateway
+  services:
+    - id: route-definition-filtering-service
+      uri: http://localhost:9096

@@ -61,7 +61,7 @@ public class MapMerge {
      * There is one exception: Merging two lists is done by concatenating them.
      * Returns the result.
      */
-    private static Map<String, Object> deepMerge(Map<String, Object> original, Map<String, Object> patch) {
+    public static Map<String, Object> deepMerge(Map<String, Object> original, Map<String, Object> patch) {
         Map<String, Object> result = deepCopy(original, true);
         for (Map.Entry<String, Object> patchEntry : patch.entrySet()) {
             String key = patchEntry.getKey();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Jan Bretschneider <mail@jan-bretschneider.de>
+ * Copyright (c) 2025 Jan Bretschneider <mail@jan-bretschneider.de>
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,15 @@ import componenttest.setup.wiremock.UserServiceMock
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.FluxExchangeResult
 
-@ActiveProfiles("custom-global-openapi-definition-url")
-class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
+@ActiveProfiles("with-gateway-name")
+class WithGatewayNameCompTest extends BaseCompTest {
 
     def "API Gateway routes requests according to OpenAPI definitions"() {
         given:
         waitForRemovalOfAllRoutesExceptThoseReadFromClasspath()
 
         and:
-        UserServiceMock.instance.mockOpenApiDefinition("/global-custom-path-to/openapi-definition")
+        UserServiceMock.instance.mockOpenApiDefinition()
         UserServiceMock.instance.mockGetUsers()
         UserServiceMock.instance.mockGetUser()
 
@@ -51,7 +51,8 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         when:
         waitForRouteAddition {
             // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
-            assert getRoutesFromActuatorEndpoint().size() == 6
+            // Route for `POST /users/{userId}/orders` is missing because of gateway name filtering.
+            assert getRoutesFromActuatorEndpoint().size() == 5
         }
 
         and:
@@ -128,26 +129,9 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
         Map getOrderRoute = extractRoute(routes, "GET", "/users/{userId}/orders/{orderId}")
         getOrderRoute == null
 
-        and:
+        and: "Route for `POST /users/{userId}/orders` is missing because of gateway name filtering."
         Map postOrderRoute = extractRoute(routes, "POST", "/users/{userId}/orders")
-        postOrderRoute.predicate == "(Methods: [POST] && Paths: [/users/{userId}/orders], match trailing slash: true)"
-        postOrderRoute.route_id != null
-        postOrderRoute.filters == [
-                "[[AddResponseHeader X-Response-FromGlobalConfig = 'global-sample-value'], order = 1]",
-                "[[AddResponseHeader X-Response-DefaultForAllServices = 'sample-value-all'], order = 1]",
-                "[[PrefixPath prefix = '/api'], order = 2]",
-                "[[AddResponseHeader X-Response-FromOpenApiDefinition = 'sample-value'], order = 3]",
-        ]
-        postOrderRoute.uri == "http://localhost:9092"
-        postOrderRoute.order == 1
-        postOrderRoute.metadata == [
-                optionName           : "OptionValue",
-                compositeObject      : [name: "value"],
-                aList                : ["foo", "bar"],
-                defaultForAllServices: 'OptionValueAll',
-                iAmNumber            : 1,
-        ]
-        postOrderRoute.size() == 6
+        postOrderRoute == null
 
         and:
         Map getThingsRoute = extractRoute(routes, "GET", "/things")
@@ -261,8 +245,16 @@ class CustomGlobalOpenApiDefinitionUrlCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        postOrderResponse.getRawStatusCode() == 201
-        postOrderResponse.getResponseBody().blockFirst() == '{"id": "order-id-1"}'
+        // Route for `POST /users/{userId}/orders` is missing because of gateway name filtering.
+        postOrderResponse.getRawStatusCode() == 404
+        String postOrderResponseBody = postOrderResponse.getResponseBody().blockFirst()
+        Map postOrderResponseBodyJson = jsonSlurper.parseText(postOrderResponseBody) as Map
+        postOrderResponseBodyJson.timestamp != null
+        postOrderResponseBodyJson.path == "/users/${USER_ID}/orders"
+        postOrderResponseBodyJson.status == 404
+        postOrderResponseBodyJson.error == "Not Found"
+        postOrderResponseBodyJson.message == null
+        postOrderResponseBodyJson.requestId != null
 
         when:
         FluxExchangeResult<String> getContextInBaseUriThingsResponse = webTestClient
