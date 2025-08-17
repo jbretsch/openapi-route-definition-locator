@@ -165,7 +165,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUsersWithoutHeaderResponse.getRawStatusCode() == 404
+        getUsersWithoutHeaderResponse.status.value() == 404
         String getUsersWithoutHeaderResponseBody = getUsersWithoutHeaderResponse.getResponseBody().blockFirst()
         Map getUsersWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUsersWithoutHeaderResponseBody) as Map
         getUsersWithoutHeaderResponseBodyJson.timestamp != null
@@ -182,7 +182,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUsersResponse.getRawStatusCode() == 200
+        getUsersResponse.status.value() == 200
         getUsersResponse.getResponseBody().blockFirst() == '[{"id": "user-id-1"}]'
 
 
@@ -192,7 +192,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUserWithoutHeaderResponse.getRawStatusCode() == 404
+        getUserWithoutHeaderResponse.status.value() == 404
         String getUserWithoutHeaderResponseBody = getUserWithoutHeaderResponse.getResponseBody().blockFirst()
         Map getUserWithoutHeaderResponseBodyJson = jsonSlurper.parseText(getUserWithoutHeaderResponseBody) as Map
         getUserWithoutHeaderResponseBodyJson.timestamp != null
@@ -210,7 +210,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getUserResponse.getRawStatusCode() == 200
+        getUserResponse.status.value() == 200
         getUserResponse.getResponseBody().blockFirst() == '{"id": "user-id-1"}'
 
         when:
@@ -219,7 +219,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getOrdersResponse.getRawStatusCode() == 418
+        getOrdersResponse.status.value() == 418
         getOrdersResponse.getResponseBody().blockFirst() == '[{"id": "order-id-1"}]'
 
         when:
@@ -229,7 +229,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
 
         then:
         // Route for `GET /users/{userId}/orders/{orderId}` is missing because it's marked as disabled in the OpenAPI definition.
-        getOrderResponse.getRawStatusCode() == 404
+        getOrderResponse.status.value() == 404
         String getOrderResponseBody = getOrderResponse.getResponseBody().blockFirst()
         Map getOrderResponseBodyJson = jsonSlurper.parseText(getOrderResponseBody) as Map
         getOrderResponseBodyJson.timestamp != null
@@ -246,7 +246,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
 
         then:
         // Route for `POST /users/{userId}/orders` is missing because of gateway name filtering.
-        postOrderResponse.getRawStatusCode() == 404
+        postOrderResponse.status.value() == 404
         String postOrderResponseBody = postOrderResponse.getResponseBody().blockFirst()
         Map postOrderResponseBodyJson = jsonSlurper.parseText(postOrderResponseBody) as Map
         postOrderResponseBodyJson.timestamp != null
@@ -262,7 +262,7 @@ class WithGatewayNameCompTest extends BaseCompTest {
                 .exchange().returnResult(String)
 
         then:
-        getContextInBaseUriThingsResponse.getRawStatusCode() == 200
+        getContextInBaseUriThingsResponse.status.value() == 200
         getContextInBaseUriThingsResponse.getResponseBody().blockFirst() == '[{"id": "thing-id-1"}]'
     }
 
