@@ -39,6 +39,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
       x-sample-key: x-sample-key-value
+  /not-published-because-of-custom-filter:
+    # See `sample-apps/api-gateway/src/main/java/net/bretti/sample/apigateway/filter/SampleOpenApiRouteDefinitionFilter.java`.
+    get:
+      summary: Work in progress
+      tags:
+        - Misc
+      responses:
+        200:
+          description: Work in progress
+      x-environment: dev
 components:
   schemas:
     User:

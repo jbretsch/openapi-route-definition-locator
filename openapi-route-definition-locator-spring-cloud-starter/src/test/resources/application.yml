@@ -16,6 +16,7 @@ spring:
 logging:
   level:
     root: info
+    net.bretti.openapi.route.definition.locator: debug
     org.springframework.cloud.gateway: debug
     org.springframework.http.server.reactive: debug
     org.springframework.web.reactive: info

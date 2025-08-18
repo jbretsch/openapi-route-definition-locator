@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static net.bretti.openapi.route.definition.locator.core.impl.utils.GatewayRouteSettingsUtil.getGatewayRouteSettings;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_NAME_UPDATES;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT;
 import static net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics.METRIC_TAG_UPDATE_RESULT_DETAILED;
@@ -73,7 +74,6 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 @RequiredArgsConstructor
 @Slf4j
 public class OpenApiDefinitionRepository implements ApplicationListener<RefreshRoutesResultEvent> {
-    private static final String X_GATEWAY_ROUTE_SETTINGS = "x-gateway-route-settings";
     private static final String FILTERS = "filters";
     private static final String PREDICATES = "predicates";
     private static final String ORDER = "order";
@@ -242,19 +242,6 @@ public class OpenApiDefinitionRepository implements ApplicationListener<RefreshR
 
     private static HttpMethod map(PathItem.HttpMethod method) {
         return HttpMethod.valueOf(method.name());
-    }
-
-    private static Optional<Map<String, Object>> getGatewayRouteSettings(Map<String, Object> extensions) {
-        if (extensions == null) {
-            return Optional.empty();
-        }
-
-        Object gatewayRouteSettings = extensions.get(X_GATEWAY_ROUTE_SETTINGS);
-        if (!(gatewayRouteSettings instanceof Map)) {
-            return Optional.empty();
-        }
-
-        return Optional.of((Map<String, Object>)gatewayRouteSettings);
     }
 
     private static List<FilterDefinition> getFilters(Optional<Map<String, Object>> gatewayRouteSettings) {

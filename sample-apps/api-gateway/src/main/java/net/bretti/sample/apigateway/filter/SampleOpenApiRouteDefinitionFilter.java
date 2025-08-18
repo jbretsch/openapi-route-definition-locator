@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Jan Bretschneider <mail@jan-bretschneider.de>
+ * Copyright (c) 2025 Jan Bretschneider <mail@jan-bretschneider.de>
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,35 @@
  *
  */
 
-package net.bretti.sample.apigateway.customizer;
+package net.bretti.sample.apigateway.filter;
 
 import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefinitionLocatorProperties;
-import net.bretti.openapi.route.definition.locator.core.customizer.OpenApiRouteDefinitionCustomizer;
+import net.bretti.openapi.route.definition.locator.core.filter.OpenApiRouteDefinitionFilter;
 import net.bretti.openapi.route.definition.locator.core.impl.utils.MapMerge;
-import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Component
-public class SampleOpenApiRouteDefinitionCustomizer implements OpenApiRouteDefinitionCustomizer {
+public class SampleOpenApiRouteDefinitionFilter implements OpenApiRouteDefinitionFilter {
+
     @Override
-    public void customize(
-            RouteDefinition routeDefinition,
-            OpenApiRouteDefinitionLocatorProperties.Service service,
-            Map<String, Object> openApiGlobalExtensions,
-            Map<String, Object> openApiOperationExtensions
-    ) {
+    public boolean test(RouteDefinition routeDefinition,
+                        OpenApiRouteDefinitionLocatorProperties.Service service,
+                        Map<String, Object> openApiGlobalExtensions,
+                        Map<String, Object> openApiOperationExtensions) {
+
+        // Example: Only publish operations marked for the current environment.
         Map<String, Object> openApiExtensions = MapMerge.deepMerge(openApiGlobalExtensions, openApiOperationExtensions);
-        Object xSampleKeyValue = openApiExtensions.get("x-sample-key");
-        if (!(xSampleKeyValue instanceof String)) {
-            return;
+        Object apiOperationEnv = openApiExtensions.get("x-environment");
+        if (apiOperationEnv instanceof String) {
+            String currentEnv = System.getenv("DEPLOY_ENV");
+            return Objects.equals(currentEnv, apiOperationEnv.toString());
         }
 
-        FilterDefinition filter = new FilterDefinition("AddResponseHeader=X-Sample-Key-Was, " + xSampleKeyValue);
-        routeDefinition.getFilters().add(filter);
+        // Publish API operation if it specifies no environment.
+        return true;
     }
 }
