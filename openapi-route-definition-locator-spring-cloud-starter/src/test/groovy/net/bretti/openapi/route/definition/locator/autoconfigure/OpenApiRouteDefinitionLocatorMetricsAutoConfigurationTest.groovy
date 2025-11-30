@@ -22,12 +22,12 @@ package net.bretti.openapi.route.definition.locator.autoconfigure
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorMetrics
 import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinitionLocatorTimedMetrics
 import org.assertj.core.api.Assertions
-import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
+import org.springframework.boot.micrometer.metrics.autoconfigure.CompositeMeterRegistryAutoConfiguration
+import org.springframework.boot.micrometer.metrics.autoconfigure.MetricsAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration
-import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
+import org.springframework.boot.webflux.autoconfigure.WebFluxAutoConfiguration
 import org.springframework.boot.logging.LogLevel
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration

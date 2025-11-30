@@ -4,12 +4,14 @@ plugins {
 
 dependencies {
     api(project(":openapi-route-definition-locator-core"))
-    implementation("org.springframework.cloud:spring-cloud-gateway-server")
+    implementation("org.springframework.cloud:spring-cloud-gateway-server-webflux")
     annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
     compileOnly("io.micrometer:micrometer-core")
 
     testImplementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
     testImplementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
+    testImplementation("org.springframework.boot:spring-boot-starter-micrometer-metrics")
+    testImplementation("org.springframework.boot:spring-boot-webtestclient")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     testRuntimeOnly("io.micrometer:micrometer-registry-prometheus")
     testImplementation("org.wiremock:wiremock-standalone:3.13.2")
