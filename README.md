@@ -73,7 +73,7 @@ Maven
       <dependency>
          <groupId>net.bretti.openapi-route-definition-locator</groupId>
          <artifactId>openapi-route-definition-locator-bom</artifactId>
-         <version>1.1.0-sc-2025.1</version>
+         <version>1.1.1-sc-2025.1</version>
          <type>pom</type>
          <scope>import</scope>
       </dependency>
@@ -87,7 +87,7 @@ Maven
 
 Gradle Kotlin DSL
 ```kotlin
-implementation(platform("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-bom:1.1.0-sc-2025.1"))
+implementation(platform("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-bom:1.1.1-sc-2025.1"))
 implementation("net.bretti.openapi-route-definition-locator:openapi-route-definition-locator-spring-cloud-starter")
 ```
 
