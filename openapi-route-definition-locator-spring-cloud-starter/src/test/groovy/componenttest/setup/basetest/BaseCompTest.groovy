@@ -29,6 +29,7 @@ import net.bretti.openapi.route.definition.locator.core.config.OpenApiRouteDefin
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -38,6 +39,7 @@ import java.time.Duration
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestApiGatewayApplication)
+@AutoConfigureWebTestClient
 abstract class BaseCompTest extends Specification {
 
     static final String USER_ID = "user-id-1"

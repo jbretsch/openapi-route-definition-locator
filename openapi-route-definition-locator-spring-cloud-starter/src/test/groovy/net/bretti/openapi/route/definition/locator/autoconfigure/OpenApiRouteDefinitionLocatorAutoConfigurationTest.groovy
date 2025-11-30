@@ -25,7 +25,7 @@ import net.bretti.openapi.route.definition.locator.core.impl.OpenApiRouteDefinit
 import org.assertj.core.api.Assertions
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration
-import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
+import org.springframework.boot.webflux.autoconfigure.WebFluxAutoConfiguration
 import org.springframework.boot.context.properties.bind.validation.BindValidationException
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration
