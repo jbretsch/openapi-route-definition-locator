@@ -19,8 +19,8 @@ the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().a
     }
 }
 
-val springCloudDependenciesVersion = "2025.1.0"
-val lombokVersion = "1.18.42"
+val springCloudDependenciesVersion = "2025.1.3"
+val lombokVersion = "1.18.48"
 val spockVersion = "2.4-M7-groovy-5.0"
 
 dependencies {
@@ -34,7 +34,7 @@ dependencies {
 
 java {
     group = "net.bretti.openapi-route-definition-locator"
-    version = "1.1.1-sc-2025.1-SNAPSHOT"
+    version = "1.1.3-sc-2025.1-SNAPSHOT"
     toolchain {
         // Keep the same Java compatibility as Spring Cloud Gateway.
         languageVersion.set(JavaLanguageVersion.of(17))
