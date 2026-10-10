@@ -53,7 +53,7 @@ flexibility and simplifying route management.
 
 | Version         | Spring Cloud | Spring Boot  | Minimum Java Version |
 |-----------------|--------------|--------------|----------------------|
-| x.y.z-sc-2025.1 | 2025.1.x     | 4.0.x        | 17                   |
+| x.y.z-sc-2025.1 | 2025.1.x     | 4.0.x, 4.1.x | 17                   |
 | x.y.z-sc-2025.0 | 2025.0.x     | 3.5.x        | 17                   |
 | x.y.z-sc-2024.0 | 2024.0.x     | 3.4.x        | 17                   |
 | x.y.z-sc-2023.0 | 2023.0.x     | 3.2.x, 3.3.x | 17                   |
@@ -616,7 +616,7 @@ openapi-route-definition-locator:
     fixed-delay: 30s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/4.0/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/4.1/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 ##### Grace period for removal of route definitions
@@ -635,7 +635,7 @@ openapi-route-definition-locator:
     remove-routes-on-update-failures-after: 120s
 ```
 
-See [Converting Durations](https://docs.spring.io/spring-boot/4.0/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
+See [Converting Durations](https://docs.spring.io/spring-boot/4.1/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.conversion.durations)
 for possible duration values.
 
 #### Disabling the OpenAPI Route Definition Locator
@@ -656,11 +656,6 @@ The OpenAPI Route Definition metrics are enabled by default if the
 [RouteDefinition metrics](https://docs.spring.io/spring-cloud-gateway/reference/5.0/spring-cloud-gateway-server-webflux/configuration.html#routedefinition-metrics)
 of the Spring Cloud Gateway Server are enabled.
 
-Note: With Spring Cloud Gateway 5.0.0 (Spring Cloud 2025.1.x), its metrics are only enabled if you have the dependency
-`org.springframework.boot:spring-boot-micrometer-tracing` on your classpath. The issue
-[spring-cloud-gateway#4006](https://github.com/spring-cloud/spring-cloud-gateway/issues/4006) has been raised to address
-this.
-
 You can disable the OpenAPI Route Definition metrics by setting
 ```yaml
 openapi-route-definition-locator:
@@ -669,7 +664,7 @@ openapi-route-definition-locator:
 ```
 
 If you have
-[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/4.0/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
+[enabled the Prometheus endpoint](https://docs.spring.io/spring-boot/4.1/reference/actuator/metrics.html#actuator.metrics.export.prometheus)
 you can expect output like this:
 
 ```
